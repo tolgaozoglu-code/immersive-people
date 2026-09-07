@@ -1,3 +1,5 @@
+logo_url: /assets/brand/logo-dark.png
+
 backend:
   name: github
   repo: tolgaozoglu-code/immersive-people
