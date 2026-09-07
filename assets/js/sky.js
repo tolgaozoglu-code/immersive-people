@@ -129,7 +129,7 @@
     }
     // Stars belong to the night: fade them out as the sun climbs.
     starVisibility = Math.max(0, Math.min(1, (-alt - 2) / 10));
-    if (host) host.style.opacity = (0.85 * starVisibility).toFixed(3);
+    if (host) host.style.opacity = (0.55 * starVisibility).toFixed(3);
   }
 
   var stars = null;
@@ -180,11 +180,11 @@
       painted.push({
         x: x,
         y: y,
-        size: Math.max(0.5, (5.2 - mag) * 0.46),
-        alpha: Math.max(0.12, Math.min(0.95, (5.6 - mag) / 5.2)) * Math.min(1, sinAlt * 2.4),
+        size: Math.max(0.4, (5.2 - mag) * 0.30),
+        alpha: Math.max(0.07, Math.min(0.55, (5.6 - mag) / 8.5)) * Math.min(1, sinAlt * 2.4),
         // Scintillation is strongest low on the horizon and for faint stars,
         // which is also how the eye actually sees it.
-        amp: Math.min(0.55, (1 - sinAlt) * 0.42 + (mag / 5) * 0.16),
+        amp: Math.min(0.40, (1 - sinAlt) * 0.30 + (mag / 5) * 0.12),
         speed: 0.7 + Math.random() * 1.9,
         phase: Math.random() * 6.283
       });
