@@ -136,8 +136,8 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--ink); outline-o
   .refs-group { flex-wrap: wrap; justify-content: center; gap: 1.6rem 2.6rem; padding-right: 0; width: 100%; }
 }
 
-.client-img { width: 200px; height: 80px; object-fit: contain; filter: grayscale(1); opacity: 0.75; flex: none; }
-[data-theme="black"] .client-img { filter: invert(1) grayscale(1); }
+.client-img { height: 52px; width: auto; max-width: 210px; object-fit: contain; flex: none; filter: brightness(0); opacity: 0.62; }
+[data-theme="black"] .client-img { filter: brightness(0) invert(1); opacity: 0.72; }
 
 /* Insights */
 .insights-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; }
@@ -259,7 +259,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--ink); outline-o
 /* References marquee — responsive scale */
 @media (max-width: 960px) {
   .refs-group { gap: 3rem; padding-right: 3rem; }
-  .client-img { width: 150px; height: 62px; }
+  .client-img { height: 44px; max-width: 170px; }
   .client { font-size: 1.25rem; }
 }
 @media (max-width: 640px) {
@@ -268,7 +268,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--ink); outline-o
     padding: 1rem 0;
   }
   .refs-group { gap: 1.9rem; padding-right: 1.9rem; }
-  .client-img { width: 108px; height: 42px; }
+  .client-img { height: 34px; max-width: 130px; }
   .client { font-size: 1rem; }
   .refs-track { animation-duration: 32s; }
 }

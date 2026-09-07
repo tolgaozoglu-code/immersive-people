@@ -1,6 +1,7 @@
 // Downloads reference logos at build time and writes a manifest.
 // Failures are non-fatal: missing logos fall back to text on the site.
-import { mkdirSync, writeFileSync, existsSync } from "node:fs";
+import { mkdirSync, writeFileSync, existsSync, readFileSync } from "node:fs";
+import sharp from "sharp";
 import { get } from "node:https";
 import { resolve } from "node:path";
 
@@ -49,6 +50,18 @@ for (const [name, url] of LOGOS) {
   const dest = resolve(OUT_DIR, file);
   try {
     if (!existsSync(dest)) await download(url, dest);
+    // Kaynak PNG'lerdeki farklı iç boşluklar logoların farklı boyutta görünmesine yol açıyor.
+    // Kenar boşluklarını kırp, sabit yükseklikte tek tip bir tuvale otur.
+    try {
+      const norm = await sharp(readFileSync(dest))
+        .trim({ threshold: 8 })
+        .resize({ height: 160, width: 640, fit: "inside", withoutEnlargement: false })
+        .png()
+        .toBuffer();
+      writeFileSync(dest, norm);
+    } catch (e) {
+      console.warn(`     ${name}: normalise skipped (${e.message})`);
+    }
     manifest[name] = `/assets/uploads/logos/${file}`;
     console.log(`ok   ${name}`);
   } catch (e) {
