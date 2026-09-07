@@ -129,15 +129,15 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--ink); outline-o
 }
 .refs-group { display: flex; align-items: center; gap: 4.5rem; padding-right: 4.5rem; }
 @keyframes refsScroll { from { transform: translateX(-50%); } to { transform: translateX(0); } }
-.client { font-family: var(--font-display); font-weight: var(--display-weight); font-size: 1.5rem; letter-spacing: var(--display-track); color: var(--muted); white-space: nowrap; flex: none; }
+.client { font-family: var(--font-display); font-weight: var(--display-weight); font-size: 1.75rem; letter-spacing: var(--display-track); color: var(--muted); white-space: nowrap; flex: none; }
 @media (prefers-reduced-motion: reduce) {
   .refs-track { animation: none; width: 100%; }
   .refs-group[aria-hidden] { display: none; }
   .refs-group { flex-wrap: wrap; justify-content: center; gap: 1.6rem 2.6rem; padding-right: 0; width: 100%; }
 }
 
-.client-img { height: 52px; width: auto; max-width: 210px; object-fit: contain; flex: none; filter: brightness(0); opacity: 0.62; }
-[data-theme="black"] .client-img { filter: brightness(0) invert(1); opacity: 0.72; }
+.client-img { width: 186px; height: 62px; object-fit: contain; flex: none; opacity: 0.72; }
+[data-theme="light"] .client-img, [data-theme="warm"] .client-img { filter: invert(1); opacity: 0.6; }
 
 /* Insights */
 .insights-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; }
@@ -259,8 +259,8 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--ink); outline-o
 /* References marquee — responsive scale */
 @media (max-width: 960px) {
   .refs-group { gap: 3rem; padding-right: 3rem; }
-  .client-img { height: 44px; max-width: 170px; }
-  .client { font-size: 1.25rem; }
+  .client-img { width: 156px; height: 52px; }
+  .client { font-size: 1.45rem; }
 }
 @media (max-width: 640px) {
   .section-refs .refs-marquee {
@@ -268,8 +268,8 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--ink); outline-o
     padding: 1rem 0;
   }
   .refs-group { gap: 1.9rem; padding-right: 1.9rem; }
-  .client-img { height: 34px; max-width: 130px; }
-  .client { font-size: 1rem; }
+  .client-img { width: 120px; height: 40px; }
+  .client { font-size: 1.15rem; }
   .refs-track { animation-duration: 32s; }
 }
 

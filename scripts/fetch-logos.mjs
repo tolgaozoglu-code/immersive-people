@@ -28,6 +28,82 @@ const LOGOS = [
   ["Innovation is GREAT", "https://static.wixstatic.com/media/29bb63_ff233858a4a8458f8226f1eecd3d990b~mv2.png"]
 ];
 
+
+// --- Logo normalisation -------------------------------------------------
+// Canvas geometry: every logo lands on the same 600x200 canvas, with the mark
+// scaled to an equal geometric mean (equal optical weight), so a square mark
+// and a wide wordmark read as the same size when placed side by side.
+const CANVAS_W = 600, CANVAS_H = 200;
+const INNER_W = 540, INNER_H = 168;
+const TARGET = 150; // sqrt(mark width * mark height)
+
+async function normalise(buf) {
+  const trimmed = await sharp(buf).trim({ threshold: 8 }).png().toBuffer();
+  const meta = await sharp(trimmed).metadata();
+  const W = meta.width, H = meta.height, N = W * H;
+
+  // True per-pixel alpha, derived by compositing over black and white:
+  // lumW - lumB == (1 - alpha) * 255, independent of the mark's own colour.
+  const overBlack = await sharp(trimmed).flatten({ background: "#000000" }).greyscale().raw().toBuffer();
+  const overWhite = await sharp(trimmed).flatten({ background: "#ffffff" }).greyscale().raw().toBuffer();
+
+  const A = new Float32Array(N);   // alpha 0..1
+  const C = new Float32Array(N);   // mark luminance 0..1
+  let covered = 0, lumSum = 0, lumCount = 0;
+  for (let i = 0; i < N; i++) {
+    const a = Math.min(1, Math.max(0, 1 - (overWhite[i] - overBlack[i]) / 255));
+    A[i] = a;
+    C[i] = a > 0.01 ? Math.min(1, overBlack[i] / 255 / a) : 0;
+    if (a > 0.5) { covered++; lumSum += C[i]; lumCount++; }
+  }
+  const coverage = covered / N;
+  const meanLum = lumCount ? lumSum / lumCount : 0;
+
+  // Spread of tone inside the opaque area: a background panel holds a mark of
+  // a different tone, whereas a solid mark is uniform.
+  let varSum = 0;
+  for (let i = 0; i < N; i++) if (A[i] > 0.5) varSum += (C[i] - meanLum) ** 2;
+  const spread = lumCount ? Math.sqrt(varSum / lumCount) : 0;
+
+  // High coverage means the artwork carries its own opaque background panel:
+  // the mark is then the part that differs from that panel. Otherwise the
+  // alpha channel already describes the mark and colour is irrelevant.
+  const alpha = Buffer.allocUnsafe(N);
+  for (let i = 0; i < N; i++) {
+    let v;
+    if (coverage > 0.85 && spread > 0.05) v = A[i] * (meanLum > 0.5 ? 1 - C[i] : C[i]);
+    else v = A[i];
+    alpha[i] = Math.round(Math.min(1, Math.max(0, v)) * 255);
+  }
+
+  const white = Buffer.alloc(N * 3, 255);
+  const silhouette = await sharp(white, { raw: { width: W, height: H, channels: 3 } })
+    .joinChannel(alpha, { raw: { width: W, height: H, channels: 1 } })
+    .png()
+    .toBuffer();
+
+  // Re-trim: the silhouette may have gained transparent margins.
+  const tight = await sharp(silhouette).trim({ threshold: 4 }).png().toBuffer();
+  const tm = await sharp(tight).metadata();
+
+  // Equal-area scaling so a square mark and a wide wordmark read alike.
+  const aspect = tm.width / tm.height;
+  let w = Math.round(TARGET * Math.sqrt(aspect));
+  let h = Math.round(TARGET / Math.sqrt(aspect));
+  const k = Math.min(INNER_W / w, INNER_H / h, 1);
+  w = Math.max(1, Math.round(w * k));
+  h = Math.max(1, Math.round(h * k));
+
+  const mark = await sharp(tight).resize(w, h, { fit: "fill" }).png().toBuffer();
+
+  return await sharp({
+    create: { width: CANVAS_W, height: CANVAS_H, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } }
+  })
+    .composite([{ input: mark, gravity: "center" }])
+    .png()
+    .toBuffer();
+}
+
 const slug = (s) =>
   s.toLowerCase()
     .replaceAll("ı", "i").replaceAll("İ", "i").replaceAll("&", "and")
@@ -50,15 +126,10 @@ for (const [name, url] of LOGOS) {
   const dest = resolve(OUT_DIR, file);
   try {
     if (!existsSync(dest)) await download(url, dest);
-    // Kaynak PNG'lerdeki farklı iç boşluklar logoların farklı boyutta görünmesine yol açıyor.
-    // Kenar boşluklarını kırp, sabit yükseklikte tek tip bir tuvale otur.
+    // Kaynak PNG'ler farklı zemin, renk ve en-boy oranlarıyla geliyor; hepsini
+    // şeffaf zeminli beyaz siluete çevirip eşit optik alanda tek tip tuvale otur.
     try {
-      const norm = await sharp(readFileSync(dest))
-        .trim({ threshold: 8 })
-        .resize({ height: 160, width: 640, fit: "inside", withoutEnlargement: false })
-        .png()
-        .toBuffer();
-      writeFileSync(dest, norm);
+      writeFileSync(dest, await normalise(readFileSync(dest)));
     } catch (e) {
       console.warn(`     ${name}: normalise skipped (${e.message})`);
     }
