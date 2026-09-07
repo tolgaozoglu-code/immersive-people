@@ -253,3 +253,20 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--ink); outline-o
 .hero-media img, .coll-hero-media img, .coll-fig img, .prod-hero img, .prod-art img, .insight-card .thumb img {
   filter: grayscale(1) contrast(1.06);
 }
+
+/* References marquee — responsive scale */
+@media (max-width: 960px) {
+  .refs-group { gap: 3rem; padding-right: 3rem; }
+  .client-img { width: 150px; height: 62px; }
+  .client { font-size: 1.25rem; }
+}
+@media (max-width: 640px) {
+  .section-refs .refs-marquee {
+    margin-left: calc(-1 * var(--pad)); margin-right: calc(-1 * var(--pad));
+    padding: 1rem 0;
+  }
+  .refs-group { gap: 1.9rem; padding-right: 1.9rem; }
+  .client-img { width: 108px; height: 42px; }
+  .client { font-size: 1rem; }
+  .refs-track { animation-duration: 32s; }
+}
