@@ -63,3 +63,19 @@ document.querySelectorAll('.media-video').forEach(function (btn) {
     btn.replaceWith(f);
   });
 });
+
+
+// Library: open the world a link points at
+(function () {
+  function openFromHash() {
+    var id = location.hash.slice(1);
+    if (!id) return;
+    var el = document.getElementById(id);
+    if (el && el.tagName === 'DETAILS') {
+      el.open = true;
+      el.scrollIntoView({ block: 'start' });
+    }
+  }
+  openFromHash();
+  addEventListener('hashchange', openFromHash);
+})();

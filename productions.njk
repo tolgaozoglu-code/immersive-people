@@ -7,11 +7,12 @@ permalink: /productions/
   <h2 class="section-title">The Library</h2>
   <p class="section-intro">36 productions. Eight worlds. One licence.</p>
   {% for w in worlds %}
-  <div class="world-group" id="{{ w.slug }}">
-    <div class="world-head">
-      <h3 class="world-title">{{ w.name }}</h3>
-      <p class="world-desc">{{ w.description }}</p>
-    </div>
+  <details class="world-group" id="{{ w.slug }}" {% if loop.first %}open{% endif %}>
+    <summary class="world-head">
+      <span class="world-title">{{ w.name }}</span>
+      <span class="world-count">{{ w.count }}</span>
+      <span class="world-desc">{{ w.description }}</span>
+    </summary>
     <div class="prod-grid">
       {% for p in collections.production %}
       {% if p.data.world == w.name %}
@@ -24,6 +25,6 @@ permalink: /productions/
       {% endif %}
       {% endfor %}
     </div>
-  </div>
+  </details>
   {% endfor %}
 </section>
