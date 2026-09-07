@@ -337,3 +337,20 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--ink); outline-o
 .sky-live { position: absolute; inset: 0; }
 .site-header, main, .site-footer { position: relative; z-index: 1; }
 @media (prefers-reduced-motion: reduce) { #sky-layer { opacity: 0.4; } }
+
+/* Homepage library — opens on click */
+.lib-featured { border-top: 1px solid var(--line); margin-top: 1.5rem; }
+.lib-featured > summary {
+  display: flex; align-items: baseline; gap: 0.9rem;
+  padding: 1.2rem 0; cursor: pointer; list-style: none;
+  font-family: var(--font-display); font-weight: var(--display-weight);
+  font-size: 1.5rem; letter-spacing: var(--display-track);
+}
+.lib-featured > summary::-webkit-details-marker { display: none; }
+.lib-featured > summary::after {
+  content: "+"; margin-left: auto; color: var(--muted); font-size: 1.4rem; line-height: 1;
+}
+.lib-featured[open] > summary::after { content: "–"; }
+.lib-featured > summary:hover .lib-summary-label { text-decoration: underline; }
+.lib-summary-count { color: var(--muted); font-size: 0.95rem; border: 1px solid var(--line); padding: 0.1rem 0.55rem; }
+.lib-featured .prod-grid { padding-bottom: 1.5rem; }

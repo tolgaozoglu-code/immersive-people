@@ -40,18 +40,24 @@ permalink: /
   <div class="world-chips">
     {% for w in worlds %}<a class="world-chip" href="/productions/#{{ w.slug }}">{{ w.name }} <span>{{ w.count }}</span></a>{% endfor %}
   </div>
-  <div class="prod-grid">
-    {% for p in collections.production %}
-    {% if p.data.featured %}
-    <a class="prod-card" href="{{ p.url }}">
-      <span class="prod-art"><img src="{{ p.data.image or p.data.keyart }}" alt="{{ p.data.title }}" loading="lazy"></span>
-      <span class="prod-cat">{{ p.data.category }}</span>
-      <span class="prod-name">{{ p.data.title }}</span>
-      <span class="prod-tag">{{ p.data.tagline }}</span>
-    </a>
-    {% endif %}
-    {% endfor %}
-  </div>
+  <details class="lib-featured">
+    <summary>
+      <span class="lib-summary-label">Featured productions</span>
+      <span class="lib-summary-count">6</span>
+    </summary>
+    <div class="prod-grid">
+      {% for p in collections.production %}
+      {% if p.data.featured %}
+      <a class="prod-card" href="{{ p.url }}">
+        <span class="prod-art"><img src="{{ p.data.image or p.data.keyart }}" alt="{{ p.data.title }}" loading="lazy"></span>
+        <span class="prod-cat">{{ p.data.category }}</span>
+        <span class="prod-name">{{ p.data.title }}</span>
+        <span class="prod-tag">{{ p.data.tagline }}</span>
+      </a>
+      {% endif %}
+      {% endfor %}
+    </div>
+  </details>
 </section>
 {% endif %}
 
