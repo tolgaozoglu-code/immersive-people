@@ -217,37 +217,17 @@
     cx.stroke();
 
     // Land
+    // Land is described only by its cut outline.
     cx.beginPath();
     var any = false;
-    var wob = 0.35 + Math.abs(plate.wobble) * 0.5;
+    var wob = 0.3 + Math.abs(plate.wobble) * 0.45;
     for (var i = 0; i < rings.length; i++) if (trace(rings[i], cx, true, wob)) any = true;
     if (any) {
-      cx.save();
-      cx.clip();
-      // Ground tone, then the cut marks over it: ruling where the plate is
-      // large enough to hold it, stipple where it is not.
-      cx.globalAlpha = 0.3;
-      cx.fillStyle = ink;
-      cx.fillRect(0, 0, size, size);
-      if (detailed) {
-        var step = Math.max(2, Math.round(plate.spacing * dpr)) / dpr;
-        cx.globalAlpha = 0.6;
-        cx.fillStyle = hatch(ink, step, plate.angle, plate.weight);
-        cx.fillRect(0, 0, size, size);
-      }
-      cx.fillStyle = ink;
-      var dots = Math.round(size * size * 0.5);
-      for (var d = 0; d < dots; d++) {
-        var px = rnd(d * 3 + 1) * size;
-        var py = rnd(d * 3 + 2) * size;
-        cx.globalAlpha = 0.25 + rnd(d * 3 + 3) * 0.6;
-        cx.fillRect(px, py, 0.7, 0.7);
-      }
-      cx.restore();
-      cx.globalAlpha = 0.85;
-      cx.lineWidth = 0.55;
+      cx.globalAlpha = 0.9;
+      cx.lineWidth = 0.6;
       cx.stroke();
     }
+    cx.globalAlpha = 1;
 
     // City lights, on the night side only.
     cx.fillStyle = ink;
