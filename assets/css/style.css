@@ -215,19 +215,8 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--ink); outline-o
     opacity: 0; visibility: hidden; transform: translateY(-8px);
     transition: opacity 0.22s ease, transform 0.22s ease, visibility 0.22s;
   }
-  .site-nav a {
-    width: 100%; padding: 0.85rem 0;
-    border-bottom: 1px solid var(--line);
-    display: flex; align-items: baseline; gap: 0.9rem;
-  }
-  .site-nav a:last-child { border-bottom: none; }
-  .site-nav a::before {
-    content: counter(nav-item, decimal-leading-zero);
-    counter-increment: nav-item;
-    font-size: 0.72rem; letter-spacing: 0.18em; color: var(--muted);
-  }
+  .site-nav a { width: 100%; padding: 0.7rem 0; border-bottom: none; }
   .site-nav a:active { opacity: 0.6; }
-  .site-nav { counter-reset: nav-item; }
   .site-nav.open { opacity: 1; visibility: visible; transform: none; }
   body.nav-open { overflow: hidden; }
   .menu-toggle { display: block; position: relative; z-index: 60; }
