@@ -155,19 +155,19 @@
   "nav": [
     {
       "label": "Home",
-      "url": "#home"
+      "url": "/#home"
     },
     {
       "label": "Work",
-      "url": "#work"
+      "url": "/#work"
     },
     {
       "label": "Approach",
-      "url": "#approach"
+      "url": "/#approach"
     },
     {
       "label": "References",
-      "url": "#references"
+      "url": "/#references"
     },
     {
       "label": "Collective",
@@ -175,11 +175,11 @@
     },
     {
       "label": "Insights",
-      "url": "#insights"
+      "url": "/#insights"
     },
     {
       "label": "Contact",
-      "url": "#contact"
+      "url": "/#contact"
     }
   ],
   "show_productions": true

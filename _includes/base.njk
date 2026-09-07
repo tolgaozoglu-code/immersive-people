@@ -14,7 +14,7 @@
 <header class="site-header">
   <a class="brand" href="/#home">{{ site.brand }}</a>
   <nav class="site-nav" id="site-nav">
-    {% for item in home.nav %}<a href="/{{ item.url }}">{{ item.label }}</a>{% endfor %}
+    {% for item in home.nav %}<a href="{{ item.url }}">{{ item.label }}</a>{% endfor %}
   </nav>
   <div class="header-actions">
     <a class="btn btn-ghost btn-small" href="/#contact">Request a Deck</a>
