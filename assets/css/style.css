@@ -70,7 +70,17 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--ink); outline-o
 .hero-tagline { font-family: var(--font-serif); font-style: italic; font-size: 1.05rem; max-width: 48ch; margin: 0 0 2.4rem; }
 .hero-ctas { display: flex; gap: 1rem; flex-wrap: wrap; }
 .hero-media { position: relative; border-left: 1px solid var(--bg); box-shadow: -14px 0 0 0 var(--bg); background: var(--card); }
-.hero-media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.hero-media { overflow: hidden; }
+.hero-media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; animation: heroDrift 36s ease-in-out infinite alternate; will-change: transform; }
+@keyframes heroDrift {
+  from { transform: scale(1.02) translate(0, 0); }
+  to   { transform: scale(1.1) translate(-1.8%, -1.4%); }
+}
+.hero-dust { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+@media (prefers-reduced-motion: reduce) {
+  .hero-media img { animation: none; }
+  .hero-dust { display: none; }
+}
 
 /* Quicklinks */
 .quicklinks {
