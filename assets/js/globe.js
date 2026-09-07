@@ -13,6 +13,7 @@
   var rings = null;
   var reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
   var breath = 1;
+  var spin = 0;
 
   // Major cities, used only to place lights on the night side.
   var CITIES = [
@@ -176,7 +177,7 @@
     var sun = subSolar(now);
     // The visitor's meridian faces us, so their place is always in view; the
     // day/night division sweeps across it in real time instead.
-    P.lon0 = here.lon * rad;
+    P.lon0 = (here.lon + spin) * rad;
     var lat0 = here.lat * 0.55 * rad;
     P.sinLat0 = Math.sin(lat0);
     P.cosLat0 = Math.cos(lat0);
@@ -229,47 +230,11 @@
     }
     cx.globalAlpha = 1;
 
-    // City lights, on the night side only.
-    cx.fillStyle = ink;
-    for (var c = 0; c < CITIES.length; c++) {
-      var la2 = CITIES[c][0], lo2 = CITIES[c][1];
-      var pt = project(lo2, la2);
-      if (!pt) continue;
-      var alt = sunAltAt(now, la2, lo2);
-      if (alt > -6) continue;                       // still daylight there
-      var darkness = Math.min(1, (-alt - 6) / 12);
-      cx.globalAlpha = 0.25 + 0.55 * darkness * breath;
-      cx.beginPath();
-      cx.arc(pt[0], pt[1], detailed ? 0.9 : 0.75, 0, 6.283);
-      cx.fill();
-    }
-    cx.globalAlpha = 1;
-
-    // Where the visitor is: always in view, at the centre of the plate.
-    var v = viewVector(here.lon, here.lat);
-    var hx = P.ox + P.R * v.x, hy = P.oy - P.R * v.y;
-    var rr = detailed ? 3 : 2.4;
-    cx.strokeStyle = ink;
-    cx.globalAlpha = 0.95 * breath;
-    cx.lineWidth = 0.9;
-    cx.beginPath();
-    cx.arc(hx, hy, rr, 0, 6.283);
-    cx.stroke();
-    cx.globalAlpha = 0.5 * breath;
-    cx.lineWidth = 0.6;
-    cx.beginPath();
-    cx.moveTo(hx - rr - 2, hy); cx.lineTo(hx - rr + 0.5, hy);
-    cx.moveTo(hx + rr - 0.5, hy); cx.lineTo(hx + rr + 2, hy);
-    cx.moveTo(hx, hy - rr - 2); cx.lineTo(hx, hy - rr + 0.5);
-    cx.moveTo(hx, hy + rr - 0.5); cx.lineTo(hx, hy + rr + 2);
-    cx.stroke();
-    cx.globalAlpha = 1;
-
     // Daylight falls from wherever the sun actually is.
     var sv = viewVector(sun.lon, sun.lat);
     var lx = P.ox + P.R * sv.x * 1.1;
     var ly = P.oy - P.R * sv.y * 1.1;
-    var behind = sv.z < 0;                       // their side is in night
+    var behind = sv.z < 0;
     var grad = cx.createRadialGradient(lx, ly, P.R * 0.1, lx, ly, P.R * 2.0);
     grad.addColorStop(0, "rgba(0,0,0,0)");
     grad.addColorStop(0.45, behind ? "rgba(0,0,0,0.45)" : "rgba(0,0,0,0.18)");
@@ -277,6 +242,37 @@
     cx.globalAlpha = 1;
     cx.fillStyle = grad;
     cx.fillRect(0, 0, size, size);
+
+    // City lights, over the shadow so the night side actually glows.
+    cx.fillStyle = ink;
+    for (var c = 0; c < CITIES.length; c++) {
+      var la2 = CITIES[c][0], lo2 = CITIES[c][1];
+      var pt = project(lo2, la2);
+      if (!pt) continue;
+      var alt = sunAltAt(now, la2, lo2);
+      if (alt > -4) continue;
+      var darkness = Math.min(1, (-alt - 4) / 10);
+      cx.globalAlpha = Math.min(1, (0.4 + 0.55 * darkness) * breath);
+      cx.beginPath();
+      cx.arc(pt[0], pt[1], detailed ? 1.0 : 0.85, 0, 6.283);
+      cx.fill();
+    }
+
+    // The visitor's own position.
+    var v = viewVector(here.lon, here.lat);
+    if (v.z > 0.02) {
+      var hx = P.ox + P.R * v.x, hy = P.oy - P.R * v.y;
+      cx.fillStyle = "#E4483C";
+      cx.globalAlpha = Math.min(1, 0.28 * breath);
+      cx.beginPath();
+      cx.arc(hx, hy, 3.2, 0, 6.283);
+      cx.fill();
+      cx.globalAlpha = Math.min(1, 0.95 * breath);
+      cx.beginPath();
+      cx.arc(hx, hy, detailed ? 1.5 : 1.3, 0, 6.283);
+      cx.fill();
+    }
+    cx.globalAlpha = 1;
     cx.restore();
 
     // Rim
@@ -288,13 +284,25 @@
     cx.globalAlpha = 1;
   }
 
+  // The globe turns gently on its own; the light stays where the sun is.
+  var lastFrame = 0;
+  function animate(ts) {
+    requestAnimationFrame(animate);
+    if (document.hidden) return;
+    if (ts - lastFrame < 66) return;          // 15 fps
+    lastFrame = ts;
+    spin = (ts / 1000) * 2.4;                 // one turn every 150 seconds
+    breath = 1 + 0.07 * Math.sin(ts / 2600);
+    draw();
+  }
+
   fetch("/assets/data/land.json")
     .then(function (r) { return r.json(); })
     .then(function (d) {
       rings = d.rings;
       draw();
-      setInterval(draw, 60000);   // Earth turns 0.25° a minute
-      if (!reduced) requestAnimationFrame(pulse);
+      setInterval(draw, 60000);
+      if (!reduced) requestAnimationFrame(animate);
       addEventListener("resize", draw);
     })
     .catch(function () { el.style.display = "none"; });
