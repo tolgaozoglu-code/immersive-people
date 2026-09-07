@@ -47,3 +47,19 @@ if (toggle && nav) {
     requestAnimationFrame(loop);
   })();
 })();
+
+
+// Media archive: load embeds only on demand
+document.querySelectorAll('.media-video').forEach(function (btn) {
+  btn.addEventListener('click', function () {
+    var src = btn.getAttribute('data-embed');
+    if (!src) return;
+    var f = document.createElement('iframe');
+    f.src = src;
+    f.title = btn.getAttribute('aria-label') || 'Video';
+    f.allow = 'autoplay; fullscreen; picture-in-picture';
+    f.allowFullscreen = true;
+    f.className = 'media-embed';
+    btn.replaceWith(f);
+  });
+});

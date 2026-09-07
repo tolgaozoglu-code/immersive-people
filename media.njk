@@ -1,0 +1,46 @@
+---
+layout: base.njk
+title: Media
+permalink: /media/
+---
+<section class="section">
+  <h2 class="section-title">{{ media_page.title }}</h2>
+  <p class="section-intro">{{ media_page.intro }}</p>
+
+  {% if collections.media.length %}
+  <div class="media-grid">
+    {% for m in collections.media %}
+    <figure class="media-item">
+      {% if m.data.kind == "video" %}
+      <button class="media-frame media-video" data-embed="{{ m.data.video_url | embedUrl }}" aria-label="Play {{ m.data.title }}">
+        {% if m.data.image %}<img src="{{ m.data.image }}" alt="{{ m.data.title }}" loading="lazy">{% endif %}
+        <span class="media-play" aria-hidden="true">▶</span>
+      </button>
+      {% elif m.data.kind == "file" %}
+      <a class="media-frame media-file" href="{{ m.data.file }}" download>
+        {% if m.data.image %}<img src="{{ m.data.image }}" alt="{{ m.data.title }}" loading="lazy">{% endif %}
+        <span class="media-play" aria-hidden="true">↓</span>
+      </a>
+      {% else %}
+      <span class="media-frame">
+        <img src="{{ m.data.image }}" alt="{{ m.data.title }}" loading="lazy">
+      </span>
+      {% endif %}
+      <figcaption>
+        <span class="media-title">{{ m.data.title }}</span>
+        {% if m.data.caption %}<span class="media-caption">{{ m.data.caption }}</span>{% endif %}
+        <span class="media-meta">
+          {% if m.data.year %}{{ m.data.year }}{% endif %}
+          {% if m.data.credit %} · {{ m.data.credit }}{% endif %}
+          {% if m.data.production %} · {{ m.data.production }}{% endif %}
+        </span>
+      </figcaption>
+    </figure>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p class="coll-text">{{ media_page.empty_state }}</p>
+  {% endif %}
+
+  <p class="media-press">{{ media_page.press_note }}</p>
+</section>

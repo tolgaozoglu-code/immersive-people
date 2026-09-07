@@ -236,3 +236,39 @@ collections:
               - { label: "CTA URL", name: "cta_url", widget: "string" }
               - { label: "Secondary Label", name: "secondary_label", widget: "string" }
               - { label: "Secondary URL", name: "secondary_url", widget: "string" }
+
+  - name: "media_page"
+    label: "Media Page"
+    files:
+      - name: "media_page"
+        label: "Media Page Content"
+        file: "_data/media_page.json"
+        fields:
+          - { label: "Title", name: "title", widget: "string" }
+          - { label: "Intro", name: "intro", widget: "text" }
+          - { label: "Empty State Text", name: "empty_state", widget: "text" }
+          - { label: "Press Note", name: "press_note", widget: "string" }
+
+  - name: "media"
+    label: "Media Archive"
+    folder: "content/media"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - label: "Type"
+        name: "kind"
+        widget: "select"
+        default: "image"
+        options:
+          - { label: "Image", value: "image" }
+          - { label: "Video (YouTube / Vimeo)", value: "video" }
+          - { label: "Download (PDF, deck, kit)", value: "file" }
+      - { label: "Image / Poster", name: "image", widget: "image", required: false }
+      - { label: "Video URL (for Video type)", name: "video_url", widget: "string", required: false }
+      - { label: "File (for Download type)", name: "file", widget: "file", required: false }
+      - { label: "Caption", name: "caption", widget: "text", required: false }
+      - { label: "Credit", name: "credit", widget: "string", required: false }
+      - { label: "Related Production", name: "production", widget: "string", required: false }
+      - { label: "Year", name: "year", widget: "string", required: false }
+      - { label: "Order", name: "order", widget: "number", default: 0 }
