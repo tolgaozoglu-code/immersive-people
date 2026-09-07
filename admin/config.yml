@@ -29,6 +29,7 @@ collections:
               - { label: "Warm Color", value: "warm" }
           - { label: "Sky Layer (faint real star field, black theme only)", name: "sky_layer", widget: "boolean", default: true }
           - { label: "Adaptive Background (background tone follows local day and night)", name: "adaptive_background", widget: "boolean", default: true }
+          - { label: "Header Globe (live daylight globe beside the wordmark)", name: "header_globe", widget: "boolean", default: true }
           - { label: "Contact Email", name: "email", widget: "string" }
           - { label: "LinkedIn URL", name: "linkedin", widget: "string" }
           - { label: "Instagram URL", name: "instagram", widget: "string" }

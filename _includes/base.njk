@@ -17,7 +17,10 @@
 <body>
 {% if (site.sky_layer or site.adaptive_background) and site.theme == "black" %}<div id="sky-layer" aria-hidden="true" data-stars="{{ "true" if site.sky_layer else "false" }}" data-adaptive="{{ "true" if site.adaptive_background else "false" }}"></div>{% endif %}
 <header class="site-header">
-  <a class="brand" href="/#home">{{ site.brand }}</a>
+  <a class="brand" href="/#home">
+    {% if site.header_globe %}<span id="globe" class="brand-globe" aria-hidden="true" title="Daylight on Earth right now"></span>{% endif %}
+    <span>{{ site.brand }}</span>
+  </a>
   <nav class="site-nav" id="site-nav">
     {% for item in home.nav %}<a href="{{ item.url }}">{{ item.label }}</a>{% endfor %}
   </nav>
@@ -43,6 +46,7 @@
   </nav>
 </footer>
 <script src="/assets/js/main.js?v={{ build.v }}"></script>
+{% if site.header_globe %}<script src="/assets/js/globe.js?v={{ build.v }}" defer></script>{% endif %}
 {% if (site.sky_layer or site.adaptive_background) and site.theme == "black" %}<script src="/assets/js/sky.js?v={{ build.v }}" defer></script>{% endif %}
 </body>
 </html>

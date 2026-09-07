@@ -20,5 +20,6 @@
   ],
   "copyright": "© 2026 Immersive People",
   "sky_layer": true,
-  "adaptive_background": true
+  "adaptive_background": true,
+  "header_globe": true
 }
