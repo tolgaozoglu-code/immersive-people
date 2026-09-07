@@ -213,6 +213,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--ink); outline-o
   }
   .site-nav.open { display: flex; }
   .menu-toggle { display: block; }
+  .header-actions { margin-left: auto; }
   .header-actions .btn { display: none; }
   .quicklinks, .work-grid, .why-grid, .insights-grid, .prod-grid { grid-template-columns: 1fr; }
   .footer-social { margin-left: 0; }
