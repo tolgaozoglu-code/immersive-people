@@ -108,12 +108,6 @@ async function normalise(buf) {
   w = Math.max(1, Math.round(w * k));
   h = Math.max(1, Math.round(h * k));
 
-  // Some artwork is a solid panel with the name knocked out of it. Keyed to a
-  // silhouette it becomes a white slab, so it is rejected here and the text
-  // mark is used instead.
-  const cover = (await sharp(tight).extractChannel(3).stats()).channels[0].mean / 255;
-  if (cover > 0.86) throw new Error("solid artwork, using text mark");
-
   const mark = await sharp(tight).resize(w, h, { fit: "fill" }).png().toBuffer();
 
   return await sharp({
