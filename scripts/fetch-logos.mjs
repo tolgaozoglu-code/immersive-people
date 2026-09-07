@@ -1,9 +1,15 @@
 // Downloads reference logos at build time and writes a manifest.
 // Failures are non-fatal: missing logos fall back to text on the site.
 import { mkdirSync, writeFileSync, existsSync, readFileSync } from "node:fs";
-import sharp from "sharp";
 import { get } from "node:https";
 import { resolve } from "node:path";
+
+let sharp = null;
+try {
+  ({ default: sharp } = await import("sharp"));
+} catch (e) {
+  console.warn(`sharp unavailable (${e.message}); logos will be used as downloaded.`);
+}
 
 const OUT_DIR = resolve("assets/uploads/logos");
 const MANIFEST = resolve("_data/logo_files.json");
@@ -38,6 +44,7 @@ const INNER_W = 540, INNER_H = 168;
 const TARGET = 150; // sqrt(mark width * mark height)
 
 async function normalise(buf) {
+  if (!sharp) return buf;
   const trimmed = await sharp(buf).trim({ threshold: 8 }).png().toBuffer();
   const meta = await sharp(trimmed).metadata();
   const W = meta.width, H = meta.height, N = W * H;
@@ -119,6 +126,7 @@ const download = (url, dest) =>
     }).on("error", rej).on("timeout", function () { this.destroy(); rej(new Error("timeout")); });
   });
 
+try {
 mkdirSync(OUT_DIR, { recursive: true });
 const manifest = {};
 for (const [name, url] of LOGOS) {
@@ -141,3 +149,8 @@ for (const [name, url] of LOGOS) {
 }
 writeFileSync(MANIFEST, JSON.stringify(manifest, null, 2) + "\n");
 console.log(`manifest: ${Object.keys(manifest).length}/${LOGOS.length} logos`);
+} catch (e) {
+  // Logolar tamamlayıcı bir katman; hiçbir hata yayını durdurmamalı.
+  console.warn(`logo step failed (${e.message}); continuing build with text fallbacks.`);
+  try { writeFileSync(MANIFEST, "{}\n"); } catch {}
+}

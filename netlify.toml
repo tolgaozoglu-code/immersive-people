@@ -1,6 +1,10 @@
 [build]
+  # sharp modern Node ister; sürümü sabitliyoruz
   command = "npm run build"
   publish = "_site"
+
+[build.environment]
+  NODE_VERSION = "20"
 
 [[headers]]
   for = "/*.html"
