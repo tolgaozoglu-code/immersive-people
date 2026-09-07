@@ -1,0 +1,115 @@
+// Faint sky layer.
+// Draws the stars actually above the visitor right now: real catalogue
+// positions (J2000, to magnitude 5.0), rotated by local sidereal time.
+// Location is approximated from the browser's time zone, never requested.
+(function () {
+  var host = document.getElementById("sky-layer");
+  if (!host) return;
+
+  var reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var canvas = document.createElement("canvas");
+  canvas.className = "sky-canvas";
+  host.appendChild(canvas);
+  var cx = canvas.getContext("2d");
+
+  // Approximate observer position without a permission prompt.
+  var ZONES = {
+    "Europe/Istanbul": [41.0, 29.0], "Europe/London": [51.5, -0.1],
+    "Europe/Paris": [48.9, 2.4], "Europe/Berlin": [52.5, 13.4],
+    "Europe/Madrid": [40.4, -3.7], "Europe/Rome": [41.9, 12.5],
+    "Europe/Amsterdam": [52.4, 4.9], "Europe/Moscow": [55.8, 37.6],
+    "America/New_York": [40.7, -74.0], "America/Chicago": [41.9, -87.6],
+    "America/Denver": [39.7, -105.0], "America/Los_Angeles": [34.1, -118.2],
+    "America/Sao_Paulo": [-23.6, -46.6], "America/Mexico_City": [19.4, -99.1],
+    "Asia/Dubai": [25.2, 55.3], "Asia/Tokyo": [35.7, 139.7],
+    "Asia/Shanghai": [31.2, 121.5], "Asia/Singapore": [1.35, 103.8],
+    "Asia/Kolkata": [19.1, 72.9], "Asia/Seoul": [37.6, 127.0],
+    "Australia/Sydney": [-33.9, 151.2], "Africa/Johannesburg": [-26.2, 28.0],
+    "Africa/Cairo": [30.0, 31.2], "Africa/Lagos": [6.5, 3.4]
+  };
+
+  function observer() {
+    var tz = "";
+    try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ""; } catch (e) {}
+    if (ZONES[tz]) return { lat: ZONES[tz][0], lon: ZONES[tz][1] };
+    // Fallback: longitude from the UTC offset, mid-northern latitude.
+    var lon = -new Date().getTimezoneOffset() / 4;
+    return { lat: 40, lon: Math.max(-180, Math.min(180, lon)) };
+  }
+
+  // Greenwich mean sidereal time in degrees.
+  function gmst(date) {
+    var jd = date.getTime() / 86400000 + 2440587.5;
+    var d = jd - 2451545.0;
+    return ((280.46061837 + 360.98564736629 * d) % 360 + 360) % 360;
+  }
+
+  var obs = observer();
+  var stars = null;
+  var rad = Math.PI / 180;
+
+  function draw() {
+    if (!stars) return;
+    var w = host.clientWidth, h = host.clientHeight;
+    var dpr = Math.min(devicePixelRatio || 1, 2);
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+    canvas.style.width = w + "px";
+    canvas.style.height = h + "px";
+    cx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    cx.clearRect(0, 0, w, h);
+
+    var lst = (gmst(new Date()) + obs.lon) * rad;
+    var latR = obs.lat * rad;
+    var sinLat = Math.sin(latR), cosLat = Math.cos(latR);
+    // Stereographic projection of the visible hemisphere, sized to cover.
+    var R = Math.max(w, h) * 0.72;
+    var ox = w / 2, oy = h * 0.52;
+    var ink = getComputedStyle(document.documentElement).getPropertyValue("--ink").trim() || "#F3F0E8";
+    cx.fillStyle = ink;
+
+    for (var i = 0; i < stars.length; i++) {
+      var s = stars[i];
+      var ha = lst - s[0] * rad;                    // hour angle
+      var dec = s[1] * rad;
+      var sinDec = Math.sin(dec), cosDec = Math.cos(dec);
+      var sinAlt = sinLat * sinDec + cosLat * cosDec * Math.cos(ha);
+      if (sinAlt <= 0.02) continue;                 // below the horizon
+      var alt = Math.asin(sinAlt);
+      var az = Math.atan2(
+        -Math.sin(ha) * cosDec,
+        cosDec * Math.cos(ha) * sinLat - sinDec * cosLat
+      );
+      var r = R * Math.tan((Math.PI / 2 - alt) / 2);
+      var x = ox + r * Math.sin(az);
+      var y = oy - r * Math.cos(az);
+      if (x < -8 || x > w + 8 || y < -8 || y > h + 8) continue;
+
+      var mag = s[2];
+      var size = Math.max(0.35, (5.0 - mag) * 0.34);
+      var a = Math.max(0.05, Math.min(0.55, (5.4 - mag) / 7));
+      cx.globalAlpha = a * Math.min(1, sinAlt * 2.2);   // fade near the horizon
+      cx.beginPath();
+      cx.arc(x, y, size, 0, 6.283);
+      cx.fill();
+    }
+    cx.globalAlpha = 1;
+  }
+
+  var pending;
+  addEventListener("resize", function () {
+    clearTimeout(pending);
+    pending = setTimeout(draw, 200);
+  });
+
+  fetch("/assets/data/stars.json")
+    .then(function (r) { return r.json(); })
+    .then(function (d) {
+      stars = d.stars;
+      draw();
+      // The sky turns 15° an hour; a redraw every half minute keeps it true
+      // without costing anything.
+      if (!reduced) setInterval(draw, 30000);
+    })
+    .catch(function () {});
+})();

@@ -15,6 +15,7 @@
 <link rel="stylesheet" href="/assets/css/style.css?v={{ build.v }}">
 </head>
 <body>
+{% if site.sky_layer and site.theme == "black" %}<div id="sky-layer" aria-hidden="true"></div>{% endif %}
 <header class="site-header">
   <a class="brand" href="/#home">{{ site.brand }}</a>
   <nav class="site-nav" id="site-nav">
@@ -42,5 +43,6 @@
   </nav>
 </footer>
 <script src="/assets/js/main.js?v={{ build.v }}"></script>
+{% if site.sky_layer and site.theme == "black" %}<script src="/assets/js/sky.js?v={{ build.v }}" defer></script>{% endif %}
 </body>
 </html>
