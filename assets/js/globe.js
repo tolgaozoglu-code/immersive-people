@@ -27,6 +27,39 @@
 
   // Each visit is a fresh impression from the plate: the ruling is re-cut at a
   // slightly different angle and weight, the way no two prints are identical.
+
+  // The visitor's approximate position, from the time zone. No prompt.
+  var ZONES = {
+    "Europe/Istanbul": [41.0, 29.0], "Europe/London": [51.5, -0.1],
+    "Europe/Paris": [48.9, 2.4], "Europe/Berlin": [52.5, 13.4],
+    "Europe/Madrid": [40.4, -3.7], "Europe/Rome": [41.9, 12.5],
+    "Europe/Amsterdam": [52.4, 4.9], "Europe/Moscow": [55.8, 37.6],
+    "America/New_York": [40.7, -74.0], "America/Chicago": [41.9, -87.6],
+    "America/Denver": [39.7, -105.0], "America/Los_Angeles": [34.1, -118.2],
+    "America/Sao_Paulo": [-23.6, -46.6], "America/Mexico_City": [19.4, -99.1],
+    "Asia/Dubai": [25.2, 55.3], "Asia/Tokyo": [35.7, 139.7],
+    "Asia/Shanghai": [31.2, 121.5], "Asia/Singapore": [1.35, 103.8],
+    "Asia/Kolkata": [19.1, 72.9], "Asia/Seoul": [37.6, 127.0],
+    "Australia/Sydney": [-33.9, 151.2], "Africa/Johannesburg": [-26.2, 28.0],
+    "Africa/Cairo": [30.0, 31.2], "Africa/Lagos": [6.5, 3.4]
+  };
+  var here = (function () {
+    var tz = "";
+    try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ""; } catch (e) {}
+    if (ZONES[tz]) return { lat: ZONES[tz][0], lon: ZONES[tz][1] };
+    return { lat: 40, lon: Math.max(-180, Math.min(180, -new Date().getTimezoneOffset() / 4)) };
+  })();
+
+  // Direction cosines in view space; z > 0 means the point faces us.
+  function viewVector(lonDeg, latDeg) {
+    var lon = lonDeg * rad, lat = latDeg * rad, dl = lon - P.lon0;
+    return {
+      x: Math.cos(lat) * Math.sin(dl),
+      y: P.cosLat0 * Math.sin(lat) - P.sinLat0 * Math.cos(lat) * Math.cos(dl),
+      z: P.sinLat0 * Math.sin(lat) + P.cosLat0 * Math.cos(lat) * Math.cos(dl)
+    };
+  }
+
   var seed = Math.random();
   var plate = {
     angle: -Math.PI / 4 + (seed - 0.5) * 0.5,
@@ -206,6 +239,38 @@
       cx.beginPath();
       cx.arc(pt[0], pt[1], detailed ? 0.7 : 0.55, 0, 6.283);
       cx.fill();
+    }
+    cx.globalAlpha = 1;
+
+    // Where the visitor is. On the near side it is marked on the sphere; when
+    // their side has turned away, a tick on the rim keeps the bearing.
+    var v = viewVector(here.lon, here.lat);
+    cx.strokeStyle = ink;
+    if (v.z > 0.02) {
+      var hx = P.ox + P.R * v.x, hy = P.oy - P.R * v.y;
+      var rr = detailed ? 2.6 : 2.2;
+      cx.globalAlpha = 0.9 * breath;
+      cx.lineWidth = 0.8;
+      cx.beginPath();
+      cx.arc(hx, hy, rr, 0, 6.283);
+      cx.stroke();
+      cx.globalAlpha = 0.45 * breath;
+      cx.lineWidth = 0.5;
+      cx.beginPath();
+      cx.moveTo(hx - rr - 1.6, hy); cx.lineTo(hx - rr + 0.4, hy);
+      cx.moveTo(hx + rr - 0.4, hy); cx.lineTo(hx + rr + 1.6, hy);
+      cx.moveTo(hx, hy - rr - 1.6); cx.lineTo(hx, hy - rr + 0.4);
+      cx.moveTo(hx, hy + rr - 0.4); cx.lineTo(hx, hy + rr + 1.6);
+      cx.stroke();
+    } else {
+      var m = Math.hypot(v.x, v.y) || 1;
+      var ux = v.x / m, uy = v.y / m;
+      cx.globalAlpha = 0.4 * breath;
+      cx.lineWidth = 1;
+      cx.beginPath();
+      cx.moveTo(P.ox + P.R * ux * 0.86, P.oy - P.R * uy * 0.86);
+      cx.lineTo(P.ox + P.R * ux * 0.99, P.oy - P.R * uy * 0.99);
+      cx.stroke();
     }
     cx.globalAlpha = 1;
 
