@@ -248,3 +248,8 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--ink); outline-o
 @media (max-width: 640px) {
   .coll-principles, .coll-gallery { grid-template-columns: 1fr; }
 }
+
+/* Monochrome imagery */
+.hero-media img, .coll-hero-media img, .coll-fig img, .prod-hero img, .prod-art img, .insight-card .thumb img {
+  filter: grayscale(1) contrast(1.06);
+}
