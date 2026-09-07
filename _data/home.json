@@ -41,7 +41,7 @@
       "title": "Open Call",
       "text": "We invite artists, curators, designers and technologists to collaborate or apply to our open calls.",
       "link_label": "Apply or Nominate →",
-      "url": "#collective"
+      "url": "/collective/"
     }
   ],
   "work_intro": {
@@ -141,7 +141,7 @@
     "body": "We are building a network of curators, artists, storytellers, researchers and production partners shaping the next generation of immersive cultural experiences.",
     "body2": "Bring a subject area, a creative vision or a strategic capability — and join a collective designed to create, license and deliver meaningful immersive work.",
     "cta_label": "Join the Collective",
-    "cta_url": "#contact"
+    "cta_url": "/collective/"
   },
   "insights_section": {
     "title": "Insights",
@@ -171,7 +171,7 @@
     },
     {
       "label": "Collective",
-      "url": "#collective"
+      "url": "/collective/"
     },
     {
       "label": "Insights",

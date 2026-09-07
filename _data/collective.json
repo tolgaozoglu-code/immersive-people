@@ -1,0 +1,82 @@
+{
+  "hero": {
+    "image": "/assets/uploads/collective/join.jpg",
+    "title": "The Collective",
+    "intro": "Immersive People is not an agency with a headcount. It is a living network of curators, artists, storytellers, researchers and production partners, organised around one idea: the world's stories deserve to be experienced, not just told."
+  },
+  "vision": {
+    "kicker": "Vision",
+    "title": "Cultural memory, made experiential",
+    "text": "We imagine a world where heritage, science, nature and human stories are not locked in archives or flattened onto screens, but staged as encounters. Experiences you stand inside, share with strangers, and carry with you. Our vision is a global circuit of venues, museums and public spaces where immersive culture travels as naturally as touring exhibitions once did."
+  },
+  "mission": {
+    "kicker": "Mission",
+    "title": "Create once, resonate everywhere",
+    "text": "Our mission is to create and license story-driven immersive productions of lasting cultural value, and to make them travel. We develop each production once, with depth and craft, then adapt it across venues, markets and formats through a single licence. This is how a story born in Anatolia reaches a museum in Europe, and how a venue anywhere gains a library of 36 productions across eight thematic worlds."
+  },
+  "principles": {
+    "kicker": "How we work",
+    "title": "Four principles hold the collective together",
+    "items": [
+      {
+        "title": "Curated Depth",
+        "text": "Every production begins with genuine subject expertise. Historians, scientists, musicians and craftspeople shape the work before any technology enters the room."
+      },
+      {
+        "title": "Built to Travel",
+        "text": "Productions are designed venue-agnostic from day one, so the same story can live in a museum hall, a public installation or a branded space."
+      },
+      {
+        "title": "Shared Authorship",
+        "text": "The collective model means contributors remain visible in the work they shape. Credit, rights and returns are structured, not implied."
+      },
+      {
+        "title": "Craft Across Senses",
+        "text": "Space, message, sound and visuals are composed together. An experience is finished only when it is felt, not merely seen."
+      }
+    ]
+  },
+  "gallery": {
+    "kicker": "In the room",
+    "images": [
+      {
+        "src": "/assets/uploads/collective/i1.jpg",
+        "caption": "Composing with light and sound"
+      },
+      {
+        "src": "/assets/uploads/collective/i2.jpg",
+        "caption": "Stories staged in landscape"
+      },
+      {
+        "src": "/assets/uploads/collective/i3.jpg",
+        "caption": "Heritage, made present"
+      },
+      {
+        "src": "/assets/uploads/collective/i4.jpg",
+        "caption": "Audiences inside the work"
+      }
+    ]
+  },
+  "stats": [
+    {
+      "value": "36",
+      "label": "Productions"
+    },
+    {
+      "value": "8",
+      "label": "Thematic Worlds"
+    },
+    {
+      "value": "1",
+      "label": "Licence"
+    }
+  ],
+  "join": {
+    "title": "Join the Collective",
+    "text": "Bring a subject area, a creative vision or a strategic capability. We run a continuous open call for curators, artists, technologists and partners who want their work to travel.",
+    "cta_label": "Apply or Nominate",
+    "cta_url": "/careers/",
+    "secondary_label": "Request a Deck",
+    "secondary_url": "mailto:hello@immersivepeople.co"
+  }
+}

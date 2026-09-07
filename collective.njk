@@ -1,0 +1,70 @@
+---
+layout: base.njk
+title: The Collective
+permalink: /collective/
+---
+<section class="coll-hero">
+  <div class="coll-hero-media">
+    <img src="{{ collective.hero.image }}" alt="{{ collective.hero.title }}">
+  </div>
+  <div class="coll-hero-text">
+    <h1 class="coll-title">{{ collective.hero.title }}</h1>
+    <p class="coll-intro">{{ collective.hero.intro }}</p>
+  </div>
+</section>
+
+<section class="section coll-split">
+  <div>
+    <p class="kicker">{{ collective.vision.kicker }}</p>
+    <h2 class="section-title">{{ collective.vision.title }}</h2>
+  </div>
+  <p class="coll-text">{{ collective.vision.text }}</p>
+</section>
+
+<section class="section coll-split">
+  <div>
+    <p class="kicker">{{ collective.mission.kicker }}</p>
+    <h2 class="section-title">{{ collective.mission.title }}</h2>
+  </div>
+  <p class="coll-text">{{ collective.mission.text }}</p>
+</section>
+
+<section class="section">
+  <p class="kicker">{{ collective.principles.kicker }}</p>
+  <h2 class="section-title">{{ collective.principles.title }}</h2>
+  <div class="why-grid coll-principles">
+    {% for item in collective.principles.items %}
+    <article class="why-item">
+      <h3>{{ item.title }}</h3>
+      <p>{{ item.text }}</p>
+    </article>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="section">
+  <p class="kicker">{{ collective.gallery.kicker }}</p>
+  <div class="coll-gallery">
+    {% for g in collective.gallery.images %}
+    <figure class="coll-fig">
+      <img src="{{ g.src }}" alt="{{ g.caption }}" loading="lazy">
+      <figcaption>{{ g.caption }}</figcaption>
+    </figure>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="coll-stats">
+  {% for s in collective.stats %}
+  <div class="coll-stat"><span class="coll-stat-value">{{ s.value }}</span><span class="coll-stat-label">{{ s.label }}</span></div>
+  {% endfor %}
+</section>
+
+<section class="section coll-join">
+  <h2 class="contact-title">{{ collective.join.title }}</h2>
+  <p class="section-intro">{{ collective.join.text }}</p>
+  <div class="hero-ctas">
+    <a class="btn btn-solid" href="{{ collective.join.cta_url }}">{{ collective.join.cta_label }}</a>
+    <a class="btn btn-ghost" href="{{ collective.join.secondary_url }}">{{ collective.join.secondary_label }}</a>
+  </div>
+</section>
