@@ -48,6 +48,7 @@
   var adaptive = host.dataset.adaptive === "true";
   var showStars = host.dataset.stars === "true";
   var starVisibility = 1;
+  var twinkle = !reduced;
 
   // Sun position (low-precision NOAA formulae, ample for tinting a background).
   function sunAltitude(date, lat, lon) {
@@ -95,13 +96,15 @@
     }
     // Stars belong to the night: fade them out as the sun climbs.
     starVisibility = Math.max(0, Math.min(1, (-alt - 2) / 10));
-    if (host) host.style.opacity = (0.5 * starVisibility).toFixed(3);
+    if (host) host.style.opacity = (0.85 * starVisibility).toFixed(3);
   }
 
   var stars = null;
   var rad = Math.PI / 180;
 
-  function draw() {
+  var painted = [];   // ekrandaki yıldızlar: konum, boy, parlaklık, sönme ritmi
+
+  function compute() {
     if (!stars) return;
     var w = host.clientWidth, h = host.clientHeight;
     var dpr = Math.min(devicePixelRatio || 1, 2);
@@ -110,43 +113,75 @@
     canvas.style.width = w + "px";
     canvas.style.height = h + "px";
     cx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    cx.clearRect(0, 0, w, h);
 
     var lst = (gmst(new Date()) + obs.lon) * rad;
     var latR = obs.lat * rad;
     var sinLat = Math.sin(latR), cosLat = Math.cos(latR);
-    // Stereographic projection of the visible hemisphere, sized to cover.
     var R = Math.max(w, h) * 0.72;
     var ox = w / 2, oy = h * 0.52;
-    var ink = getComputedStyle(document.documentElement).getPropertyValue("--ink").trim() || "#F3F0E8";
-    cx.fillStyle = ink;
 
+    painted = [];
     for (var i = 0; i < stars.length; i++) {
       var s = stars[i];
-      var ha = lst - s[0] * rad;                    // hour angle
+      var ha = lst - s[0] * rad;
       var dec = s[1] * rad;
       var sinDec = Math.sin(dec), cosDec = Math.cos(dec);
       var sinAlt = sinLat * sinDec + cosLat * cosDec * Math.cos(ha);
-      if (sinAlt <= 0.02) continue;                 // below the horizon
-      var alt = Math.asin(sinAlt);
+      if (sinAlt <= 0.02) continue;
+      var altR = Math.asin(sinAlt);
       var az = Math.atan2(
         -Math.sin(ha) * cosDec,
         cosDec * Math.cos(ha) * sinLat - sinDec * cosLat
       );
-      var r = R * Math.tan((Math.PI / 2 - alt) / 2);
+      var r = R * Math.tan((Math.PI / 2 - altR) / 2);
       var x = ox + r * Math.sin(az);
       var y = oy - r * Math.cos(az);
       if (x < -8 || x > w + 8 || y < -8 || y > h + 8) continue;
 
       var mag = s[2];
-      var size = Math.max(0.35, (5.0 - mag) * 0.34);
-      var a = Math.max(0.05, Math.min(0.55, (5.4 - mag) / 7));
-      cx.globalAlpha = a * Math.min(1, sinAlt * 2.2);   // fade near the horizon
+      painted.push({
+        x: x,
+        y: y,
+        size: Math.max(0.5, (5.2 - mag) * 0.46),
+        alpha: Math.max(0.12, Math.min(0.95, (5.6 - mag) / 5.2)) * Math.min(1, sinAlt * 2.4),
+        // Scintillation is strongest low on the horizon and for faint stars,
+        // which is also how the eye actually sees it.
+        amp: Math.min(0.55, (1 - sinAlt) * 0.42 + (mag / 5) * 0.16),
+        speed: 0.7 + Math.random() * 1.9,
+        phase: Math.random() * 6.283
+      });
+    }
+  }
+
+  function render(t) {
+    var w = canvas.width, h = canvas.height;
+    cx.clearRect(0, 0, w, h);
+    var ink = getComputedStyle(document.documentElement).getPropertyValue("--ink").trim() || "#F3F0E8";
+    cx.fillStyle = ink;
+    for (var i = 0; i < painted.length; i++) {
+      var p = painted[i];
+      var flicker = twinkle ? 1 + p.amp * Math.sin(t * p.speed + p.phase) : 1;
+      cx.globalAlpha = Math.max(0, Math.min(1, p.alpha * flicker));
       cx.beginPath();
-      cx.arc(x, y, size, 0, 6.283);
+      cx.arc(p.x, p.y, p.size, 0, 6.283);
       cx.fill();
     }
     cx.globalAlpha = 1;
+  }
+
+  var last = 0;
+  function loop(ts) {
+    if (document.hidden) { requestAnimationFrame(loop); return; }
+    if (ts - last > 55) {            // ~18 fps, gözle akıcı, pilde ucuz
+      last = ts;
+      render(ts / 1000);
+    }
+    requestAnimationFrame(loop);
+  }
+
+  function draw() {
+    compute();
+    render(performance.now() / 1000);
   }
 
   var pending;
@@ -165,9 +200,9 @@
     .then(function (d) {
       stars = d.stars;
       draw();
-      // The sky turns 15° an hour; a redraw every half minute keeps it true
-      // without costing anything.
-      if (!reduced) setInterval(draw, 30000);
+      // Positions only need refreshing now and then: the sky turns 15° an hour.
+      setInterval(compute, 30000);
+      if (twinkle) requestAnimationFrame(loop);
     })
     .catch(function () {});
 })();
