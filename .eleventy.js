@@ -1,6 +1,7 @@
 module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("admin");
   eleventyConfig.addPassthroughCopy("assets");
+  eleventyConfig.addPassthroughCopy("favicon.ico");
   eleventyConfig.addCollection("insights", (api) =>
     api.getFilteredByTag("insight").sort((a, b) => b.date - a.date)
   );
