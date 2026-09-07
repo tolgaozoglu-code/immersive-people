@@ -67,13 +67,19 @@ permalink: /
   </div>
 </section>
 
-<section class="section" id="references">
+<section class="section section-refs" id="references">
   <h2 class="section-title">{{ home.clients.title }}</h2>
-  <div class="client-row">
-    {% for c in home.clients.logos %}
-    {% set autologo = logo_files[c.name] %}
-    {% if c.image %}<img class="client-img" src="{{ c.image }}" alt="{{ c.name }}">{% elif autologo %}<img class="client-img" src="{{ autologo }}" alt="{{ c.name }}">{% else %}<span class="client">{{ c.name }}</span>{% endif %}
-    {% endfor %}
+  <div class="refs-marquee">
+    <div class="refs-track">
+      {% for copy in [0, 1] %}
+      <div class="refs-group" {% if copy %}aria-hidden="true"{% endif %}>
+        {% for c in home.clients.logos %}
+        {% set autologo = logo_files[c.name] %}
+        {% if c.image %}<img class="client-img" src="{{ c.image }}" alt="{{ c.name }}">{% elif autologo %}<img class="client-img" src="{{ autologo }}" alt="{{ c.name }}">{% else %}<span class="client">{{ c.name }}</span>{% endif %}
+        {% endfor %}
+      </div>
+      {% endfor %}
+    </div>
   </div>
 </section>
 
