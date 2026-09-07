@@ -124,14 +124,16 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--ink); outline-o
 /* Clients — marquee */
 .refs-marquee { overflow: hidden; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 1.4rem 0; }
 .refs-track { display: flex; width: max-content; animation: refsScroll 45s linear infinite; }
-.refs-marquee:hover .refs-track { animation-play-state: paused; }
+@media (hover: hover) and (pointer: fine) {
+  .refs-marquee:hover .refs-track { animation-play-state: paused; }
+}
 .refs-group { display: flex; align-items: center; gap: 4.5rem; padding-right: 4.5rem; }
 @keyframes refsScroll { to { transform: translateX(-50%); } }
 .client { font-family: var(--font-display); font-weight: var(--display-weight); font-size: 1.5rem; letter-spacing: var(--display-track); color: var(--muted); white-space: nowrap; flex: none; }
 @media (prefers-reduced-motion: reduce) {
-  .refs-track { animation: none; width: auto; flex-wrap: wrap; }
+  .refs-track { animation: none; width: 100%; }
   .refs-group[aria-hidden] { display: none; }
-  .refs-group { flex-wrap: wrap; gap: 1.5rem 3rem; padding-right: 0; }
+  .refs-group { flex-wrap: wrap; justify-content: center; gap: 1.6rem 2.6rem; padding-right: 0; width: 100%; }
 }
 
 .client-img { width: 200px; height: 80px; object-fit: contain; filter: grayscale(1); opacity: 0.75; flex: none; }
