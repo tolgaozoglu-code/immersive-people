@@ -4,6 +4,7 @@ backend:
   name: github
   repo: tolgaozoglu-code/immersive-people
   branch: main
+  base_url: https://immersive-people.tolga-9e5.workers.dev
   auth_endpoint: api/auth
 
 media_folder: "assets/uploads"
