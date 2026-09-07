@@ -15,17 +15,19 @@ GitHub → Settings → Developer settings → **OAuth Apps → New OAuth App**
 Kaydet, **Client ID**'yi kopyala, **Generate a new client secret** ile bir secret üret ve kopyala.
 Not: Site adresi değişirse (önce pages.dev, sonra alan adı) callback URL'i güncelle veya ikinci bir OAuth App aç.
 
-### 2. Cloudflare Pages projesi
-Cloudflare dashboard → **Workers & Pages → Create → Pages → Connect to Git** → `immersive-people` reposunu seç.
-- Framework preset: None
+### 2. Cloudflare projesi (Workers + static assets)
+Cloudflare dashboard → **Compute → Workers & Pages → Create application** → Git reposunu bağla → `immersive-people`.
+- Project name: `immersive-people`
 - Build command: `npm run build`
-- Build output directory: `_site`
-- Environment variables (Production **ve** Preview için ayrı ayrı ekle):
-  - `GITHUB_CLIENT_ID` = OAuth App'in Client ID'si
-  - `GITHUB_CLIENT_SECRET` = üretilen secret
-  - `NODE_VERSION` = `20`
+- Deploy command: `npx wrangler deploy`
 
-Deploy et. Site `proje-adi.pages.dev` adresinde yayına girer, her `main` push'unda otomatik güncellenir.
+Yapılandırma `wrangler.jsonc` dosyasından okunur: statik site `_site`, `/api/*` yolları panel oturumu için Worker'a gider.
+
+Deploy sonrası **Settings → Variables and Secrets** altına ekle (secret olarak):
+- `GITHUB_CLIENT_ID`
+- `GITHUB_CLIENT_SECRET`
+
+Ekledikten sonra bir kez yeniden deploy et. Site `immersive-people.<hesap>.workers.dev` adresinde yayına girer, her `main` push'unda otomatik güncellenir.
 
 ### 3. Alan adı
 Pages projesi → **Custom domains → Set up a domain** → `immersivepeople.co`.

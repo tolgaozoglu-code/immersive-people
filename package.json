@@ -7,7 +7,8 @@
     "start": "eleventy --serve"
   },
   "devDependencies": {
-    "@11ty/eleventy": "^2.0.1"
+    "@11ty/eleventy": "^2.0.1",
+    "wrangler": "^4.129.1"
   },
   "dependencies": {
     "sharp": "^0.35.4"
