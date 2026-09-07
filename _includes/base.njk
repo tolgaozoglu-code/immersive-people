@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=League+Gothic&family=Barlow+Condensed:wght@500;600&family=Oswald:wght@400;500;600&family=Rajdhani:wght@400;500;600&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/css/style.css">
+<link rel="stylesheet" href="/assets/css/style.css?v={{ build.v }}">
 </head>
 <body>
 <header class="site-header">
@@ -37,7 +37,7 @@
     <a href="mailto:{{ site.email }}">{{ site.email }}</a>
   </nav>
 </footer>
-<script src="/assets/js/main.js"></script>
+<script src="/assets/js/main.js?v={{ build.v }}"></script>
 <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 <script>
 if (window.netlifyIdentity) {
