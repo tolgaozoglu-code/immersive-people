@@ -45,6 +45,59 @@
   }
 
   var obs = observer();
+  var adaptive = host.dataset.adaptive === "true";
+  var showStars = host.dataset.stars === "true";
+  var starVisibility = 1;
+
+  // Sun position (low-precision NOAA formulae, ample for tinting a background).
+  function sunAltitude(date, lat, lon) {
+    var jd = date.getTime() / 86400000 + 2440587.5;
+    var d = jd - 2451545.0;
+    var L = (280.460 + 0.9856474 * d) % 360;
+    var g = ((357.528 + 0.9856003 * d) % 360) * rad;
+    var lam = (L + 1.915 * Math.sin(g) + 0.020 * Math.sin(2 * g)) * rad;
+    var eps = (23.439 - 0.0000004 * d) * rad;
+    var ra = Math.atan2(Math.cos(eps) * Math.sin(lam), Math.cos(lam));
+    var dec = Math.asin(Math.sin(eps) * Math.sin(lam));
+    var ha = (gmst(date) + lon) * rad - ra;
+    var L2 = lat * rad;
+    return Math.asin(
+      Math.sin(L2) * Math.sin(dec) + Math.cos(L2) * Math.cos(dec) * Math.cos(ha)
+    ) / rad;
+  }
+
+  function mix(a, b, t) {
+    return [
+      Math.round(a[0] + (b[0] - a[0]) * t),
+      Math.round(a[1] + (b[1] - a[1]) * t),
+      Math.round(a[2] + (b[2] - a[2]) * t)
+    ];
+  }
+
+  // Near-black throughout; only the temperature of the black changes.
+  var NIGHT = [7, 9, 14];      // cool, deep
+  var TWILIGHT = [18, 12, 10]; // ember
+  var DAY = [15, 15, 14];      // neutral graphite
+
+  function tint(alt) {
+    var c;
+    if (alt <= -18) c = NIGHT;
+    else if (alt <= -4) c = mix(NIGHT, TWILIGHT, (alt + 18) / 14);
+    else if (alt <= 8) c = mix(TWILIGHT, DAY, (alt + 4) / 12);
+    else c = DAY;
+    return "rgb(" + c[0] + "," + c[1] + "," + c[2] + ")";
+  }
+
+  function applyAmbience() {
+    var alt = sunAltitude(new Date(), obs.lat, obs.lon);
+    if (adaptive) {
+      document.documentElement.style.setProperty("--bg", tint(alt));
+    }
+    // Stars belong to the night: fade them out as the sun climbs.
+    starVisibility = Math.max(0, Math.min(1, (-alt - 2) / 10));
+    if (host) host.style.opacity = (0.5 * starVisibility).toFixed(3);
+  }
+
   var stars = null;
   var rad = Math.PI / 180;
 
@@ -101,6 +154,11 @@
     clearTimeout(pending);
     pending = setTimeout(draw, 200);
   });
+
+  applyAmbience();
+  setInterval(applyAmbience, 60000);
+
+  if (!showStars) return;
 
   fetch("/assets/data/stars.json")
     .then(function (r) { return r.json(); })
