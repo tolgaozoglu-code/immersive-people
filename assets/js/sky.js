@@ -7,10 +7,43 @@
   if (!host) return;
 
   var reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  var canvas = document.createElement("canvas");
+  // Two layers: the steady majority is painted once, only the genuinely
+  // twinkling minority is repainted each frame.
+  var canvas = document.createElement("canvas");   // steady
   canvas.className = "sky-canvas";
   host.appendChild(canvas);
   var cx = canvas.getContext("2d");
+
+  var live = document.createElement("canvas");     // twinkling
+  live.className = "sky-canvas sky-live";
+  host.appendChild(live);
+  var lx = live.getContext("2d");
+
+  // Devices asking for less: no animation at all.
+  var frugal = false;
+  try {
+    frugal = (navigator.connection && navigator.connection.saveData) ||
+             (navigator.deviceMemory && navigator.deviceMemory <= 2) ||
+             (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 2);
+  } catch (e) {}
+
+  // Pre-rendered dot: drawImage is markedly cheaper than a path fill per star.
+  var sprite = null, spriteR = 0;
+  function makeSprite(color) {
+    spriteR = 8;
+    var c = document.createElement("canvas");
+    c.width = c.height = spriteR * 2;
+    var g = c.getContext("2d");
+    var grad = g.createRadialGradient(spriteR, spriteR, 0, spriteR, spriteR, spriteR);
+    grad.addColorStop(0, color);
+    grad.addColorStop(0.45, color);
+    grad.addColorStop(1, "rgba(255,255,255,0)");
+    g.fillStyle = grad;
+    g.beginPath();
+    g.arc(spriteR, spriteR, spriteR, 0, 6.283);
+    g.fill();
+    sprite = c;
+  }
 
   // Approximate observer position without a permission prompt.
   var ZONES = {
@@ -48,7 +81,7 @@
   var adaptive = host.dataset.adaptive === "true";
   var showStars = host.dataset.stars === "true";
   var starVisibility = 1;
-  var twinkle = !reduced;
+  var twinkle = !reduced && !frugal;
 
   // Sun position (low-precision NOAA formulae, ample for tinting a background).
   function sunAltitude(date, lat, lon) {
@@ -102,17 +135,21 @@
   var stars = null;
   var rad = Math.PI / 180;
 
-  var painted = [];   // ekrandaki yıldızlar: konum, boy, parlaklık, sönme ritmi
+  var painted = [], steady = [], lively = [];
 
   function compute() {
     if (!stars) return;
     var w = host.clientWidth, h = host.clientHeight;
     var dpr = Math.min(devicePixelRatio || 1, 2);
-    canvas.width = w * dpr;
-    canvas.height = h * dpr;
-    canvas.style.width = w + "px";
-    canvas.style.height = h + "px";
-    cx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    [canvas, live].forEach(function (c) {
+      c.width = w * dpr;
+      c.height = h * dpr;
+      c.style.width = w + "px";
+      c.style.height = h + "px";
+      c.getContext("2d").setTransform(dpr, 0, 0, dpr, 0, 0);
+    });
+    // Fewer stars on small screens: they would not be resolvable anyway.
+    var magLimit = w < 700 ? 4.3 : 5.0;
 
     var lst = (gmst(new Date()) + obs.lon) * rad;
     var latR = obs.lat * rad;
@@ -139,6 +176,7 @@
       if (x < -8 || x > w + 8 || y < -8 || y > h + 8) continue;
 
       var mag = s[2];
+      if (mag > magLimit) continue;
       painted.push({
         x: x,
         y: y,
@@ -153,35 +191,60 @@
     }
   }
 
-  function render(t) {
-    var w = canvas.width, h = canvas.height;
-    cx.clearRect(0, 0, w, h);
-    var ink = getComputedStyle(document.documentElement).getPropertyValue("--ink").trim() || "#F3F0E8";
-    cx.fillStyle = ink;
-    for (var i = 0; i < painted.length; i++) {
-      var p = painted[i];
-      var flicker = twinkle ? 1 + p.amp * Math.sin(t * p.speed + p.phase) : 1;
-      cx.globalAlpha = Math.max(0, Math.min(1, p.alpha * flicker));
-      cx.beginPath();
-      cx.arc(p.x, p.y, p.size, 0, 6.283);
-      cx.fill();
+  function split() {
+    steady = [];
+    lively = [];
+    if (!twinkle) { steady = painted.slice(); return; }
+    // Only the strongest scintillators are animated; a hard cap keeps the
+    // per-frame cost flat no matter how many stars are up.
+    var cap = host.clientWidth < 700 ? 90 : 180;
+    var sorted = painted.slice().sort(function (a, b) { return b.amp - a.amp; });
+    for (var i = 0; i < sorted.length; i++) {
+      (i < cap && sorted[i].amp > 0.22 ? lively : steady).push(sorted[i]);
     }
+  }
+
+  function dot(ctx, p, alpha) {
+    var r = p.size * 2.2;
+    ctx.globalAlpha = Math.max(0, Math.min(1, alpha));
+    ctx.drawImage(sprite, p.x - r, p.y - r, r * 2, r * 2);
+  }
+
+  function paintSteady() {
+    var w = host.clientWidth, h = host.clientHeight;
+    cx.clearRect(0, 0, w, h);
+    for (var i = 0; i < steady.length; i++) dot(cx, steady[i], steady[i].alpha);
     cx.globalAlpha = 1;
+  }
+
+  function paintLive(t) {
+    var w = host.clientWidth, h = host.clientHeight;
+    lx.clearRect(0, 0, w, h);
+    for (var i = 0; i < lively.length; i++) {
+      var p = lively[i];
+      dot(lx, p, p.alpha * (1 + p.amp * Math.sin(t * p.speed + p.phase)));
+    }
+    lx.globalAlpha = 1;
   }
 
   var last = 0;
   function loop(ts) {
     if (document.hidden) { requestAnimationFrame(loop); return; }
-    if (ts - last > 55) {            // ~18 fps, gözle akıcı, pilde ucuz
+    if (ts - last > 80) {            // 12 fps is enough for scintillation
       last = ts;
-      render(ts / 1000);
+      paintLive(ts / 1000);
     }
     requestAnimationFrame(loop);
   }
 
   function draw() {
     compute();
-    render(performance.now() / 1000);
+    if (!sprite) {
+      makeSprite(getComputedStyle(document.documentElement).getPropertyValue("--ink").trim() || "#F3F0E8");
+    }
+    split();
+    paintSteady();
+    paintLive(performance.now() / 1000);
   }
 
   var pending;
@@ -201,7 +264,7 @@
       stars = d.stars;
       draw();
       // Positions only need refreshing now and then: the sky turns 15° an hour.
-      setInterval(compute, 30000);
+      setInterval(draw, 30000);
       if (twinkle) requestAnimationFrame(loop);
     })
     .catch(function () {});
