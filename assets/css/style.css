@@ -387,11 +387,12 @@ main, .site-footer { position: relative; z-index: 1; }
 .article > * { position: relative; }
 
 /* Header: keep the wordmark on one line as the nav grows */
-@media (max-width: 1180px) {
+@media (max-width: 1180px) and (min-width: 641px) {
   .site-nav { gap: 1.1rem; font-size: 0.74rem; }
   .brand { font-size: 1.35rem; }
   .brand-globe { width: 32px; height: 32px; }
 }
+@media (max-width: 640px) { .brand { font-size: 1.3rem; } }
 @media (max-width: 900px) and (min-width: 641px) {
   .site-nav { gap: 0.8rem; font-size: 0.68rem; }
   .brand { font-size: 1.2rem; }
