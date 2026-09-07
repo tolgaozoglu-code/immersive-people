@@ -1,0 +1,8 @@
+---
+layout: base.njk
+---
+<article class="article">
+  <h1 class="article-title">{{ title }}</h1>
+  {% if intro %}<p class="article-excerpt">{{ intro }}</p>{% endif %}
+  <div class="article-body">{{ content | safe }}</div>
+</article>

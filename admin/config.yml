@@ -158,3 +158,13 @@ collections:
       - { label: "Order (within world)", name: "order", widget: "number", default: 0 }
       - { label: "Keyart (generated)", name: "keyart", widget: "string", required: false }
       - { label: "Custom Image (optional, replaces keyart)", name: "image", widget: "image", required: false }
+
+  - name: "pages"
+    label: "Pages"
+    folder: "content/pages"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Intro", name: "intro", widget: "string", required: false }
+      - { label: "Body", name: "body", widget: "markdown" }

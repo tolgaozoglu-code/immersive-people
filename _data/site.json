@@ -7,15 +7,15 @@
   "footer_links": [
     {
       "label": "Privacy",
-      "url": "#"
+      "url": "/privacy/"
     },
     {
       "label": "Terms",
-      "url": "#"
+      "url": "/terms/"
     },
     {
       "label": "Careers",
-      "url": "#"
+      "url": "/careers/"
     }
   ],
   "copyright": "© 2026 Immersive People"
