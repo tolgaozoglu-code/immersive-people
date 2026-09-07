@@ -163,8 +163,10 @@
 
     var now = new Date();
     var sun = subSolar(now);
-    P.lon0 = sun.lon * rad;
-    var lat0 = sun.lat * 0.5 * rad;
+    // The visitor's meridian faces us, so their place is always in view; the
+    // day/night division sweeps across it in real time instead.
+    P.lon0 = here.lon * rad;
+    var lat0 = here.lat * 0.55 * rad;
     P.sinLat0 = Math.sin(lat0);
     P.cosLat0 = Math.cos(lat0);
     P.R = size / 2 - 0.75;
@@ -237,51 +239,40 @@
       var darkness = Math.min(1, (-alt - 6) / 12);
       cx.globalAlpha = 0.25 + 0.55 * darkness * breath;
       cx.beginPath();
-      cx.arc(pt[0], pt[1], detailed ? 0.7 : 0.55, 0, 6.283);
+      cx.arc(pt[0], pt[1], detailed ? 0.9 : 0.75, 0, 6.283);
       cx.fill();
     }
     cx.globalAlpha = 1;
 
-    // Where the visitor is. On the near side it is marked on the sphere; when
-    // their side has turned away, a tick on the rim keeps the bearing.
+    // Where the visitor is: always in view, at the centre of the plate.
     var v = viewVector(here.lon, here.lat);
+    var hx = P.ox + P.R * v.x, hy = P.oy - P.R * v.y;
+    var rr = detailed ? 3 : 2.4;
     cx.strokeStyle = ink;
-    if (v.z > 0.02) {
-      var hx = P.ox + P.R * v.x, hy = P.oy - P.R * v.y;
-      var rr = detailed ? 2.6 : 2.2;
-      cx.globalAlpha = 0.9 * breath;
-      cx.lineWidth = 0.8;
-      cx.beginPath();
-      cx.arc(hx, hy, rr, 0, 6.283);
-      cx.stroke();
-      cx.globalAlpha = 0.45 * breath;
-      cx.lineWidth = 0.5;
-      cx.beginPath();
-      cx.moveTo(hx - rr - 1.6, hy); cx.lineTo(hx - rr + 0.4, hy);
-      cx.moveTo(hx + rr - 0.4, hy); cx.lineTo(hx + rr + 1.6, hy);
-      cx.moveTo(hx, hy - rr - 1.6); cx.lineTo(hx, hy - rr + 0.4);
-      cx.moveTo(hx, hy + rr - 0.4); cx.lineTo(hx, hy + rr + 1.6);
-      cx.stroke();
-    } else {
-      var m = Math.hypot(v.x, v.y) || 1;
-      var ux = v.x / m, uy = v.y / m;
-      cx.globalAlpha = 0.4 * breath;
-      cx.lineWidth = 1;
-      cx.beginPath();
-      cx.moveTo(P.ox + P.R * ux * 0.86, P.oy - P.R * uy * 0.86);
-      cx.lineTo(P.ox + P.R * ux * 0.99, P.oy - P.R * uy * 0.99);
-      cx.stroke();
-    }
+    cx.globalAlpha = 0.95 * breath;
+    cx.lineWidth = 0.9;
+    cx.beginPath();
+    cx.arc(hx, hy, rr, 0, 6.283);
+    cx.stroke();
+    cx.globalAlpha = 0.5 * breath;
+    cx.lineWidth = 0.6;
+    cx.beginPath();
+    cx.moveTo(hx - rr - 2, hy); cx.lineTo(hx - rr + 0.5, hy);
+    cx.moveTo(hx + rr - 0.5, hy); cx.lineTo(hx + rr + 2, hy);
+    cx.moveTo(hx, hy - rr - 2); cx.lineTo(hx, hy - rr + 0.5);
+    cx.moveTo(hx, hy + rr - 0.5); cx.lineTo(hx, hy + rr + 2);
+    cx.stroke();
     cx.globalAlpha = 1;
 
-    // Volume: the limb away from the sun falls off.
-    var grad = cx.createRadialGradient(
-      P.ox - P.R * 0.2, P.oy - P.R * 0.2, P.R * 0.1,
-      P.ox, P.oy, P.R
-    );
+    // Daylight falls from wherever the sun actually is.
+    var sv = viewVector(sun.lon, sun.lat);
+    var lx = P.ox + P.R * sv.x * 1.1;
+    var ly = P.oy - P.R * sv.y * 1.1;
+    var behind = sv.z < 0;                       // their side is in night
+    var grad = cx.createRadialGradient(lx, ly, P.R * 0.1, lx, ly, P.R * 2.0);
     grad.addColorStop(0, "rgba(0,0,0,0)");
-    grad.addColorStop(0.6, "rgba(0,0,0,0.2)");
-    grad.addColorStop(1, "rgba(0,0,0,0.65)");
+    grad.addColorStop(0.45, behind ? "rgba(0,0,0,0.45)" : "rgba(0,0,0,0.18)");
+    grad.addColorStop(1, behind ? "rgba(0,0,0,0.82)" : "rgba(0,0,0,0.62)");
     cx.globalAlpha = 1;
     cx.fillStyle = grad;
     cx.fillRect(0, 0, size, size);
