@@ -354,3 +354,25 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--ink); outline-o
 .lib-featured > summary:hover .lib-summary-label { text-decoration: underline; }
 .lib-summary-count { color: var(--muted); font-size: 0.95rem; border: 1px solid var(--line); padding: 0.1rem 0.55rem; }
 .lib-featured .prod-grid { padding-bottom: 1.5rem; }
+
+/* Insights — a faint plate behind the card */
+.insight-card { position: relative; overflow: hidden; }
+.insight-card::before {
+  content: ""; position: absolute; inset: 0;
+  background-image: var(--card-art); background-size: cover; background-position: center;
+  filter: grayscale(1) contrast(1.1);
+  opacity: 0.1; pointer-events: none;
+}
+[data-theme="black"] .insight-card::before { filter: grayscale(1) invert(1) contrast(1.1); opacity: 0.12; }
+.insight-card > * { position: relative; }
+.article { position: relative; }
+.article::before {
+  content: ""; position: absolute; top: 0; left: 0; right: 0; height: 260px;
+  background-image: var(--card-art); background-size: cover; background-position: center;
+  filter: grayscale(1); opacity: 0.08;
+  -webkit-mask-image: linear-gradient(#000, transparent);
+  mask-image: linear-gradient(#000, transparent);
+  pointer-events: none;
+}
+[data-theme="black"] .article::before { filter: grayscale(1) invert(1); opacity: 0.1; }
+.article > * { position: relative; }

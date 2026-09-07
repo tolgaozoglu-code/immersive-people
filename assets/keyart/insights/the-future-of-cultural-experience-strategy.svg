@@ -1,0 +1,35 @@
+<svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg">
+<rect width="900" height="600" fill="#F7F6F2"/>
+<line x1="468" y1="270" x2="1368" y2="270" stroke="#121212" stroke-width=".9" opacity="0.41"/>
+<line x1="468" y1="270" x2="1342" y2="486" stroke="#121212" stroke-width=".9" opacity="0.50"/>
+<line x1="468" y1="270" x2="1265" y2="689" stroke="#121212" stroke-width=".9" opacity="0.40"/>
+<line x1="468" y1="270" x2="1142" y2="867" stroke="#121212" stroke-width=".9" opacity="0.21"/>
+<line x1="468" y1="270" x2="979" y2="1011" stroke="#121212" stroke-width=".9" opacity="0.29"/>
+<line x1="468" y1="270" x2="787" y2="1112" stroke="#121212" stroke-width=".9" opacity="0.29"/>
+<line x1="468" y1="270" x2="577" y2="1164" stroke="#121212" stroke-width=".9" opacity="0.49"/>
+<line x1="468" y1="270" x2="360" y2="1164" stroke="#121212" stroke-width=".9" opacity="0.43"/>
+<line x1="468" y1="270" x2="149" y2="1112" stroke="#121212" stroke-width=".9" opacity="0.19"/>
+<line x1="468" y1="270" x2="-43" y2="1011" stroke="#121212" stroke-width=".9" opacity="0.44"/>
+<line x1="468" y1="270" x2="-206" y2="867" stroke="#121212" stroke-width=".9" opacity="0.26"/>
+<line x1="468" y1="270" x2="-329" y2="689" stroke="#121212" stroke-width=".9" opacity="0.47"/>
+<line x1="468" y1="270" x2="-406" y2="486" stroke="#121212" stroke-width=".9" opacity="0.37"/>
+<line x1="468" y1="270" x2="-432" y2="271" stroke="#121212" stroke-width=".9" opacity="0.39"/>
+<line x1="468" y1="270" x2="-406" y2="55" stroke="#121212" stroke-width=".9" opacity="0.36"/>
+<line x1="468" y1="270" x2="-329" y2="-148" stroke="#121212" stroke-width=".9" opacity="0.34"/>
+<line x1="468" y1="270" x2="-206" y2="-326" stroke="#121212" stroke-width=".9" opacity="0.44"/>
+<line x1="468" y1="270" x2="-43" y2="-470" stroke="#121212" stroke-width=".9" opacity="0.42"/>
+<line x1="468" y1="270" x2="149" y2="-571" stroke="#121212" stroke-width=".9" opacity="0.43"/>
+<line x1="468" y1="270" x2="359" y2="-623" stroke="#121212" stroke-width=".9" opacity="0.27"/>
+<line x1="468" y1="270" x2="576" y2="-623" stroke="#121212" stroke-width=".9" opacity="0.38"/>
+<line x1="468" y1="270" x2="787" y2="-571" stroke="#121212" stroke-width=".9" opacity="0.32"/>
+<line x1="468" y1="270" x2="979" y2="-470" stroke="#121212" stroke-width=".9" opacity="0.24"/>
+<line x1="468" y1="270" x2="1142" y2="-326" stroke="#121212" stroke-width=".9" opacity="0.41"/>
+<line x1="468" y1="270" x2="1265" y2="-148" stroke="#121212" stroke-width=".9" opacity="0.38"/>
+<line x1="468" y1="270" x2="1342" y2="55" stroke="#121212" stroke-width=".9" opacity="0.27"/>
+<ellipse cx="468" cy="270" rx="17" ry="7" fill="none" stroke="#121212" stroke-width="1.4" opacity="0.70"/>
+<ellipse cx="468" cy="270" rx="66" ry="25" fill="none" stroke="#121212" stroke-width="1.4" opacity="0.60"/>
+<ellipse cx="468" cy="270" rx="180" ry="68" fill="none" stroke="#121212" stroke-width="1.4" opacity="0.50"/>
+<ellipse cx="468" cy="270" rx="243" ry="91" fill="none" stroke="#121212" stroke-width="1.4" opacity="0.40"/>
+<ellipse cx="468" cy="270" rx="415" ry="156" fill="none" stroke="#121212" stroke-width="1.4" opacity="0.30"/>
+<ellipse cx="468" cy="270" rx="589" ry="221" fill="none" stroke="#121212" stroke-width="1.4" opacity="0.20"/>
+</svg>

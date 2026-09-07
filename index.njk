@@ -104,7 +104,7 @@ permalink: /
   </div>
   <div class="insights-grid">
     {% for post in collections.insights %}
-    <article class="insight-card">
+    <article class="insight-card"{% if post.data.image or post.data.keyart %} style="--card-art: url('{{ post.data.image or post.data.keyart }}')"{% endif %}>
       <h3><a href="{{ post.url }}">{{ post.data.title }}</a></h3>
       <p>{{ post.data.excerpt }}</p>
       <a class="read-more" href="{{ post.url }}">Read Article →</a>

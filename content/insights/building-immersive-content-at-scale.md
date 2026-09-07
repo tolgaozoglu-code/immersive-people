@@ -1,4 +1,5 @@
 ---
+keyart: /assets/keyart/insights/building-immersive-content-at-scale.svg
 title: Building Immersive Content at Scale
 excerpt: Creative frameworks and workflows for ambitious experience programmes.
 date: 2026-01-05

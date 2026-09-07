@@ -1,4 +1,5 @@
 ---
+keyart: /assets/keyart/insights/designing-memorable-immersive-experiences.svg
 title: Designing Memorable Immersive Experiences
 excerpt: How story, space and technology come together to create lasting impact.
 date: 2026-01-20

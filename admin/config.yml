@@ -146,6 +146,8 @@ collections:
       - { label: "Title", name: "title", widget: "string" }
       - { label: "Excerpt", name: "excerpt", widget: "text" }
       - { label: "Date", name: "date", widget: "datetime", format: "YYYY-MM-DD", time_format: false }
+      - { label: "Background Image (optional, replaces the generated pattern)", name: "image", widget: "image", required: false }
+      - { label: "Generated Pattern (do not edit)", name: "keyart", widget: "string", required: false }
       - { label: "Body", name: "body", widget: "markdown" }
 
   - name: "productions"

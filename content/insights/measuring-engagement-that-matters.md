@@ -1,4 +1,5 @@
 ---
+keyart: /assets/keyart/insights/measuring-engagement-that-matters.svg
 title: Measuring Engagement That Matters
 excerpt: "Beyond attendance: new approaches to understanding impact."
 date: 2026-01-15
