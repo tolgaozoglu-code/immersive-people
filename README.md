@@ -2,15 +2,38 @@
 
 Eleventy (statik site) + Decap CMS. Tüm içerik `/admin` panelinden düzenlenir, her kayıt Git commit'i olarak siteye otomatik yansır. Backend ve veritabanı yok, Netlify free plan yeterli.
 
-## Yayına alma (Netlify)
+## Yayına alma (Cloudflare Pages)
 
-1. Bu klasörü bir GitHub reposuna push et (branch adı `main` olmalı, `admin/config.yml` buna ayarlı).
-2. Netlify → **Add new site → Import an existing project** → repoyu seç. Build ayarları `netlify.toml`'dan otomatik gelir (build: `npm run build`, publish: `_site`). Deploy et.
-3. Netlify site panelinde **Site configuration → Identity → Enable Identity**.
-4. Identity → **Registration**: "Invite only" seç.
-5. Identity → **Services → Git Gateway → Enable Git Gateway**.
-6. Identity → **Invite users** ile içerik girecek kişilerin mailini davet et. Davet maili linki siteye düşer, şifre belirlenir.
-7. Panel: `https://SITE-ADRESI/admin/`
+Site Cloudflare Pages'te barınır, panel girişi GitHub hesabıyla yapılır. Ücretsiz plan yeterlidir.
+
+### 1. GitHub OAuth uygulaması (panel girişi için)
+GitHub → Settings → Developer settings → **OAuth Apps → New OAuth App**
+- Application name: `Immersive People CMS`
+- Homepage URL: sitenin adresi (örn. `https://immersivepeople.co`)
+- Authorization callback URL: `https://immersivepeople.co/api/callback`
+
+Kaydet, **Client ID**'yi kopyala, **Generate a new client secret** ile bir secret üret ve kopyala.
+Not: Site adresi değişirse (önce pages.dev, sonra alan adı) callback URL'i güncelle veya ikinci bir OAuth App aç.
+
+### 2. Cloudflare Pages projesi
+Cloudflare dashboard → **Workers & Pages → Create → Pages → Connect to Git** → `immersive-people` reposunu seç.
+- Framework preset: None
+- Build command: `npm run build`
+- Build output directory: `_site`
+- Environment variables (Production **ve** Preview için ayrı ayrı ekle):
+  - `GITHUB_CLIENT_ID` = OAuth App'in Client ID'si
+  - `GITHUB_CLIENT_SECRET` = üretilen secret
+  - `NODE_VERSION` = `20`
+
+Deploy et. Site `proje-adi.pages.dev` adresinde yayına girer, her `main` push'unda otomatik güncellenir.
+
+### 3. Alan adı
+Pages projesi → **Custom domains → Set up a domain** → `immersivepeople.co`.
+Alan adı Cloudflare'de değilse verilen CNAME kaydını mevcut DNS panelinize girin; Cloudflare'deyse tek tıkla bağlanır. SSL otomatik gelir. MX kayıtlarına dokunmayın, mail etkilenmez.
+
+### 4. Panel erişimi
+`https://SITE/admin` → **Login with GitHub**. Panele girecek herkesin GitHub hesabı olmalı ve repoya yazma yetkisi verilmeli:
+GitHub → repo → Settings → Collaborators → Add people (Write yetkisi).
 
 ## Görünüm
 

@@ -4,9 +4,14 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Immersive People — Content Manager</title>
-  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 </head>
 <body>
+  <script>window.CMS_MANUAL_INIT = true;</script>
   <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+  <script>
+    // base_url panelin yayinlandigi adresten turetilir; domain degisince
+    // ayar dosyasina dokunmak gerekmez.
+    window.CMS.init({ config: { backend: { base_url: window.location.origin } } });
+  </script>
 </body>
 </html>
