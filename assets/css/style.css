@@ -128,7 +128,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--ink); outline-o
   .refs-marquee:hover .refs-track { animation-play-state: paused; }
 }
 .refs-group { display: flex; align-items: center; gap: 4.5rem; padding-right: 4.5rem; }
-@keyframes refsScroll { to { transform: translateX(-50%); } }
+@keyframes refsScroll { from { transform: translateX(-50%); } to { transform: translateX(0); } }
 .client { font-family: var(--font-display); font-weight: var(--display-weight); font-size: 1.5rem; letter-spacing: var(--display-track); color: var(--muted); white-space: nowrap; flex: none; }
 @media (prefers-reduced-motion: reduce) {
   .refs-track { animation: none; width: 100%; }
