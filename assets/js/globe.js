@@ -80,7 +80,7 @@
 
   function draw() {
     if (!rings) return;
-    var size = el.clientWidth || 34;
+    var size = el.clientWidth || 40;
     var dpr = Math.min(devicePixelRatio || 1, 2);
     canvas.width = size * dpr;
     canvas.height = size * dpr;
@@ -100,80 +100,78 @@
     P.oy = size / 2;
 
     var ink = getComputedStyle(document.documentElement).getPropertyValue("--ink").trim() || "#F3F0E8";
-    // Hatch spacing follows the device pixel grid so the texture reads as tone
-    // rather than turning to mush at small sizes.
-    var step = Math.max(2, Math.round(2.2 * dpr)) / dpr;
+    // Below roughly 60px the plate cannot hold ruling: it turns to noise, so
+    // the drawing is reduced to clean line work at that size.
+    var detailed = size * dpr >= 120;
+    var gratStep = detailed ? 30 : 45;
 
     cx.lineJoin = "round";
     cx.lineCap = "round";
     cx.strokeStyle = ink;
 
-    // Graticule, cut lightly into the plate.
-    cx.globalAlpha = 0.16;
+    // Everything is drawn inside the disc.
+    cx.save();
+    cx.beginPath();
+    cx.arc(P.ox, P.oy, P.R, 0, 6.283);
+    cx.clip();
+
+    // Graticule
+    cx.globalAlpha = detailed ? 0.16 : 0.13;
     cx.lineWidth = 0.4;
     cx.beginPath();
-    for (var lon = -180; lon < 180; lon += 30) {
+    for (var lon = -180; lon < 180; lon += gratStep) {
       var mer = [];
-      for (var la = -90; la <= 90; la += 4) mer.push([lon, la]);
+      for (var la = -80; la <= 80; la += 4) mer.push([lon, la]);
       trace(mer, cx, false);
     }
-    for (var lat = -60; lat <= 60; lat += 30) {
+    for (var lat = -gratStep; lat <= gratStep; lat += gratStep) {
       var par = [];
       for (var lo = -180; lo <= 180; lo += 4) par.push([lo, lat]);
       trace(par, cx, false);
     }
     cx.stroke();
 
-    // Landmasses: filled with ruling, not with a solid tone.
-    cx.save();
+    // Land
     cx.beginPath();
     var any = false;
     for (var i = 0; i < rings.length; i++) if (trace(rings[i], cx, true)) any = true;
     if (any) {
-      cx.clip();
-      cx.globalAlpha = 0.75;
-      cx.fillStyle = hatch(ink, step, -Math.PI / 4, 0.5);
-      cx.fillRect(0, 0, size, size);
-      cx.globalAlpha = 0.45;
-      cx.fillStyle = hatch(ink, step * 1.6, Math.PI / 4, 0.4);  // cross-hatch
-      cx.fillRect(0, 0, size, size);
+      if (detailed) {
+        cx.save();
+        cx.clip();
+        var step = Math.max(2, Math.round(2.4 * dpr)) / dpr;
+        cx.globalAlpha = 0.7;
+        cx.fillStyle = hatch(ink, step, -Math.PI / 4, 0.5);
+        cx.fillRect(0, 0, size, size);
+        cx.restore();
+      } else {
+        cx.globalAlpha = 0.5;
+        cx.fillStyle = ink;
+        cx.fill("evenodd");
+      }
+      cx.globalAlpha = detailed ? 0.85 : 0.8;
+      cx.lineWidth = 0.5;
+      cx.stroke();
     }
-    cx.restore();
 
-    // Coast outlines over the ruling.
-    cx.globalAlpha = 0.9;
-    cx.lineWidth = 0.5;
-    cx.beginPath();
-    for (var k = 0; k < rings.length; k++) trace(rings[k], cx, true);
-    cx.stroke();
-
-    // Volume: the unlit limb is cut denser and sinks away.
-    cx.save();
-    cx.beginPath();
-    cx.arc(P.ox, P.oy, P.R, 0, 6.283);
-    cx.clip();
-    cx.globalAlpha = 0.30;
-    cx.fillStyle = hatch(ink, step * 1.3, Math.PI / 2, 0.35);
-    cx.fillRect(0, 0, size, size);
-    var grad = cx.createRadialGradient(P.ox - P.R * 0.15, P.oy - P.R * 0.15, P.R * 0.15, P.ox, P.oy, P.R);
+    // Volume: the limb away from the sun falls off.
+    var grad = cx.createRadialGradient(
+      P.ox - P.R * 0.2, P.oy - P.R * 0.2, P.R * 0.1,
+      P.ox, P.oy, P.R
+    );
     grad.addColorStop(0, "rgba(0,0,0,0)");
-    grad.addColorStop(0.55, "rgba(0,0,0,0.25)");
-    grad.addColorStop(1, "rgba(0,0,0,0.72)");
+    grad.addColorStop(0.6, "rgba(0,0,0,0.2)");
+    grad.addColorStop(1, "rgba(0,0,0,0.65)");
     cx.globalAlpha = 1;
     cx.fillStyle = grad;
     cx.fillRect(0, 0, size, size);
     cx.restore();
 
-    // Double rim, as on an engraved plate.
-    cx.globalAlpha = 0.75;
+    // Rim
+    cx.globalAlpha = 0.7;
     cx.lineWidth = 0.7;
     cx.beginPath();
     cx.arc(P.ox, P.oy, P.R, 0, 6.283);
-    cx.stroke();
-    cx.globalAlpha = 0.3;
-    cx.lineWidth = 0.4;
-    cx.beginPath();
-    cx.arc(P.ox, P.oy, P.R - 1.6, 0, 6.283);
     cx.stroke();
     cx.globalAlpha = 1;
   }
