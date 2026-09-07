@@ -39,28 +39,48 @@
     var lon = lonDeg * rad, lat = latDeg * rad;
     var dl = lon - P.lon0;
     var cosC = P.sinLat0 * Math.sin(lat) + P.cosLat0 * Math.cos(lat) * Math.cos(dl);
-    if (cosC <= 0) return null;                       // far side of the globe
+    if (cosC <= 0) return null;
     return [
       P.ox + P.R * Math.cos(lat) * Math.sin(dl),
       P.oy - P.R * (P.cosLat0 * Math.sin(lat) - P.sinLat0 * Math.cos(lat) * Math.cos(dl))
     ];
   }
 
-  function stroke(points, ctx, close) {
-    var started = false;
-    ctx.beginPath();
+  function trace(points, ctx, close) {
+    var started = false, drew = false;
     for (var i = 0; i < points.length; i++) {
       var p = project(points[i][0], points[i][1]);
       if (!p) { started = false; continue; }
       if (!started) { ctx.moveTo(p[0], p[1]); started = true; } else { ctx.lineTo(p[0], p[1]); }
+      drew = true;
     }
-    if (close) ctx.closePath();
-    ctx.stroke();
+    if (close && drew) ctx.closePath();
+    return drew;
+  }
+
+  // Engraving hatch: parallel ruling, the way a plate is cut.
+  function hatch(color, spacing, angle, width) {
+    var c = document.createElement("canvas");
+    var n = spacing * 4;
+    c.width = c.height = n;
+    var g = c.getContext("2d");
+    g.strokeStyle = color;
+    g.lineWidth = width;
+    g.translate(n / 2, n / 2);
+    g.rotate(angle);
+    g.translate(-n / 2, -n / 2);
+    for (var y = -n; y < n * 2; y += spacing) {
+      g.beginPath();
+      g.moveTo(-n, y);
+      g.lineTo(n * 2, y);
+      g.stroke();
+    }
+    return cx.createPattern(c, "repeat");
   }
 
   function draw() {
     if (!rings) return;
-    var size = el.clientWidth || 28;
+    var size = el.clientWidth || 34;
     var dpr = Math.min(devicePixelRatio || 1, 2);
     canvas.width = size * dpr;
     canvas.height = size * dpr;
@@ -71,7 +91,7 @@
 
     var now = new Date();
     var sun = subSolar(now);
-    P.lon0 = sun.lon * rad;                 // the meridian facing the sun
+    P.lon0 = sun.lon * rad;
     var lat0 = sun.lat * 0.5 * rad;
     P.sinLat0 = Math.sin(lat0);
     P.cosLat0 = Math.cos(lat0);
@@ -80,51 +100,80 @@
     P.oy = size / 2;
 
     var ink = getComputedStyle(document.documentElement).getPropertyValue("--ink").trim() || "#F3F0E8";
-    cx.strokeStyle = ink;
+    // Hatch spacing follows the device pixel grid so the texture reads as tone
+    // rather than turning to mush at small sizes.
+    var step = Math.max(2, Math.round(2.2 * dpr)) / dpr;
+
     cx.lineJoin = "round";
     cx.lineCap = "round";
+    cx.strokeStyle = ink;
 
-    // Engraved plate: the sphere is described by lines, not by fill.
-    cx.globalAlpha = 0.20;
+    // Graticule, cut lightly into the plate.
+    cx.globalAlpha = 0.16;
     cx.lineWidth = 0.4;
-    for (var lon = -180; lon < 180; lon += 30) {          // meridians
+    cx.beginPath();
+    for (var lon = -180; lon < 180; lon += 30) {
       var mer = [];
       for (var la = -90; la <= 90; la += 4) mer.push([lon, la]);
-      stroke(mer, cx, false);
+      trace(mer, cx, false);
     }
-    for (var lat = -60; lat <= 60; lat += 30) {           // parallels
+    for (var lat = -60; lat <= 60; lat += 30) {
       var par = [];
       for (var lo = -180; lo <= 180; lo += 4) par.push([lo, lat]);
-      stroke(par, cx, false);
+      trace(par, cx, false);
     }
-    cx.globalAlpha = 0.30;
-    var eq = [];
-    for (var lo2 = -180; lo2 <= 180; lo2 += 4) eq.push([lo2, 0]);
-    stroke(eq, cx, false);
+    cx.stroke();
 
-    // Coastlines, drawn as an outline rather than a mass.
-    cx.globalAlpha = 0.85;
-    cx.lineWidth = 0.55;
-    for (var i = 0; i < rings.length; i++) stroke(rings[i], cx, true);
+    // Landmasses: filled with ruling, not with a solid tone.
+    cx.save();
+    cx.beginPath();
+    var any = false;
+    for (var i = 0; i < rings.length; i++) if (trace(rings[i], cx, true)) any = true;
+    if (any) {
+      cx.clip();
+      cx.globalAlpha = 0.75;
+      cx.fillStyle = hatch(ink, step, -Math.PI / 4, 0.5);
+      cx.fillRect(0, 0, size, size);
+      cx.globalAlpha = 0.45;
+      cx.fillStyle = hatch(ink, step * 1.6, Math.PI / 4, 0.4);  // cross-hatch
+      cx.fillRect(0, 0, size, size);
+    }
+    cx.restore();
 
-    // The unlit half sits back a little.
+    // Coast outlines over the ruling.
+    cx.globalAlpha = 0.9;
+    cx.lineWidth = 0.5;
+    cx.beginPath();
+    for (var k = 0; k < rings.length; k++) trace(rings[k], cx, true);
+    cx.stroke();
+
+    // Volume: the unlit limb is cut denser and sinks away.
     cx.save();
     cx.beginPath();
     cx.arc(P.ox, P.oy, P.R, 0, 6.283);
     cx.clip();
-    var grad = cx.createRadialGradient(P.ox, P.oy, P.R * 0.2, P.ox, P.oy, P.R);
+    cx.globalAlpha = 0.30;
+    cx.fillStyle = hatch(ink, step * 1.3, Math.PI / 2, 0.35);
+    cx.fillRect(0, 0, size, size);
+    var grad = cx.createRadialGradient(P.ox - P.R * 0.15, P.oy - P.R * 0.15, P.R * 0.15, P.ox, P.oy, P.R);
     grad.addColorStop(0, "rgba(0,0,0,0)");
-    grad.addColorStop(1, "rgba(0,0,0,0.6)");
-    cx.fillStyle = grad;
+    grad.addColorStop(0.55, "rgba(0,0,0,0.25)");
+    grad.addColorStop(1, "rgba(0,0,0,0.72)");
     cx.globalAlpha = 1;
+    cx.fillStyle = grad;
     cx.fillRect(0, 0, size, size);
     cx.restore();
 
-    // Plate rim
-    cx.globalAlpha = 0.6;
+    // Double rim, as on an engraved plate.
+    cx.globalAlpha = 0.75;
     cx.lineWidth = 0.7;
     cx.beginPath();
     cx.arc(P.ox, P.oy, P.R, 0, 6.283);
+    cx.stroke();
+    cx.globalAlpha = 0.3;
+    cx.lineWidth = 0.4;
+    cx.beginPath();
+    cx.arc(P.ox, P.oy, P.R - 1.6, 0, 6.283);
     cx.stroke();
     cx.globalAlpha = 1;
   }
