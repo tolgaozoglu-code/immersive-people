@@ -61,6 +61,12 @@
   }
 
   var seed = Math.random();
+  function rnd(n) {                       // stable pseudo-random per index
+    var t = (n * 1103515245 + seed * 1e9) >>> 0;
+    t = (t ^ (t >>> 15)) * 2246822507;
+    t = (t ^ (t >>> 13)) * 3266489909;
+    return ((t ^ (t >>> 16)) >>> 0) / 4294967296;
+  }
   var plate = {
     angle: -Math.PI / 4 + (seed - 0.5) * 0.5,
     spacing: 2.2 + (seed - 0.5) * 0.7,
@@ -118,11 +124,16 @@
     ];
   }
 
-  function trace(points, ctx, close) {
+  function trace(points, ctx, close, wobble) {
     var started = false, drew = false;
     for (var i = 0; i < points.length; i++) {
       var p = project(points[i][0], points[i][1]);
       if (!p) { started = false; continue; }
+      if (wobble) {
+        // A cut line, not a printed one: the burin never runs perfectly true.
+        p[0] += (rnd(i * 7 + points.length) - 0.5) * wobble;
+        p[1] += (rnd(i * 13 + points.length) - 0.5) * wobble;
+      }
       if (!started) { ctx.moveTo(p[0], p[1]); started = true; } else { ctx.lineTo(p[0], p[1]); }
       drew = true;
     }
@@ -208,23 +219,33 @@
     // Land
     cx.beginPath();
     var any = false;
-    for (var i = 0; i < rings.length; i++) if (trace(rings[i], cx, true)) any = true;
+    var wob = 0.35 + Math.abs(plate.wobble) * 0.5;
+    for (var i = 0; i < rings.length; i++) if (trace(rings[i], cx, true, wob)) any = true;
     if (any) {
+      cx.save();
+      cx.clip();
+      // Ground tone, then the cut marks over it: ruling where the plate is
+      // large enough to hold it, stipple where it is not.
+      cx.globalAlpha = 0.3;
+      cx.fillStyle = ink;
+      cx.fillRect(0, 0, size, size);
       if (detailed) {
-        cx.save();
-        cx.clip();
         var step = Math.max(2, Math.round(plate.spacing * dpr)) / dpr;
-        cx.globalAlpha = 0.7;
+        cx.globalAlpha = 0.6;
         cx.fillStyle = hatch(ink, step, plate.angle, plate.weight);
         cx.fillRect(0, 0, size, size);
-        cx.restore();
-      } else {
-        cx.globalAlpha = 0.5;
-        cx.fillStyle = ink;
-        cx.fill("evenodd");
       }
-      cx.globalAlpha = detailed ? 0.85 : 0.8;
-      cx.lineWidth = 0.5;
+      cx.fillStyle = ink;
+      var dots = Math.round(size * size * 0.5);
+      for (var d = 0; d < dots; d++) {
+        var px = rnd(d * 3 + 1) * size;
+        var py = rnd(d * 3 + 2) * size;
+        cx.globalAlpha = 0.25 + rnd(d * 3 + 3) * 0.6;
+        cx.fillRect(px, py, 0.7, 0.7);
+      }
+      cx.restore();
+      cx.globalAlpha = 0.85;
+      cx.lineWidth = 0.55;
       cx.stroke();
     }
 
