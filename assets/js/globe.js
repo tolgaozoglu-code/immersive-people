@@ -32,9 +32,35 @@
     return { lat: dec, lon: lon };
   }
 
+  // Projection helpers -------------------------------------------------
+  var P = { R: 0, ox: 0, oy: 0, sinLat0: 0, cosLat0: 1, lon0: 0 };
+
+  function project(lonDeg, latDeg) {
+    var lon = lonDeg * rad, lat = latDeg * rad;
+    var dl = lon - P.lon0;
+    var cosC = P.sinLat0 * Math.sin(lat) + P.cosLat0 * Math.cos(lat) * Math.cos(dl);
+    if (cosC <= 0) return null;                       // far side of the globe
+    return [
+      P.ox + P.R * Math.cos(lat) * Math.sin(dl),
+      P.oy - P.R * (P.cosLat0 * Math.sin(lat) - P.sinLat0 * Math.cos(lat) * Math.cos(dl))
+    ];
+  }
+
+  function stroke(points, ctx, close) {
+    var started = false;
+    ctx.beginPath();
+    for (var i = 0; i < points.length; i++) {
+      var p = project(points[i][0], points[i][1]);
+      if (!p) { started = false; continue; }
+      if (!started) { ctx.moveTo(p[0], p[1]); started = true; } else { ctx.lineTo(p[0], p[1]); }
+    }
+    if (close) ctx.closePath();
+    ctx.stroke();
+  }
+
   function draw() {
     if (!rings) return;
-    var size = el.clientWidth || 26;
+    var size = el.clientWidth || 28;
     var dpr = Math.min(devicePixelRatio || 1, 2);
     canvas.width = size * dpr;
     canvas.height = size * dpr;
@@ -45,61 +71,60 @@
 
     var now = new Date();
     var sun = subSolar(now);
-    var lon0 = sun.lon;                    // daylight faces the viewer
-    var lat0 = sun.lat * 0.5 * rad;        // slight seasonal tilt
-    var R = size / 2 - 0.5;
-    var ox = size / 2, oy = size / 2;
-    var sinLat0 = Math.sin(lat0), cosLat0 = Math.cos(lat0);
+    P.lon0 = sun.lon * rad;                 // the meridian facing the sun
+    var lat0 = sun.lat * 0.5 * rad;
+    P.sinLat0 = Math.sin(lat0);
+    P.cosLat0 = Math.cos(lat0);
+    P.R = size / 2 - 0.75;
+    P.ox = size / 2;
+    P.oy = size / 2;
+
     var ink = getComputedStyle(document.documentElement).getPropertyValue("--ink").trim() || "#F3F0E8";
+    cx.strokeStyle = ink;
+    cx.lineJoin = "round";
+    cx.lineCap = "round";
 
-    // Ocean disc
-    cx.beginPath();
-    cx.arc(ox, oy, R, 0, 6.283);
-    cx.fillStyle = ink;
-    cx.globalAlpha = 0.16;
-    cx.fill();
-    cx.globalAlpha = 1;
-
-    // Land, orthographic projection
-    cx.fillStyle = ink;
-    cx.globalAlpha = 0.85;
-    for (var i = 0; i < rings.length; i++) {
-      var ring = rings[i];
-      var started = false;
-      cx.beginPath();
-      for (var j = 0; j < ring.length; j++) {
-        var lon = ring[j][0] * rad, lat = ring[j][1] * rad;
-        var dl = lon - lon0 * rad;
-        var cosC = sinLat0 * Math.sin(lat) + cosLat0 * Math.cos(lat) * Math.cos(dl);
-        if (cosC <= 0) { started = false; continue; }   // far side
-        var x = ox + R * Math.cos(lat) * Math.sin(dl);
-        var y = oy - R * (cosLat0 * Math.sin(lat) - sinLat0 * Math.cos(lat) * Math.cos(dl));
-        if (!started) { cx.moveTo(x, y); started = true; } else { cx.lineTo(x, y); }
-      }
-      cx.closePath();
-      cx.fill();
+    // Engraved plate: the sphere is described by lines, not by fill.
+    cx.globalAlpha = 0.20;
+    cx.lineWidth = 0.4;
+    for (var lon = -180; lon < 180; lon += 30) {          // meridians
+      var mer = [];
+      for (var la = -90; la <= 90; la += 4) mer.push([lon, la]);
+      stroke(mer, cx, false);
     }
-    cx.globalAlpha = 1;
+    for (var lat = -60; lat <= 60; lat += 30) {           // parallels
+      var par = [];
+      for (var lo = -180; lo <= 180; lo += 4) par.push([lo, lat]);
+      stroke(par, cx, false);
+    }
+    cx.globalAlpha = 0.30;
+    var eq = [];
+    for (var lo2 = -180; lo2 <= 180; lo2 += 4) eq.push([lo2, 0]);
+    stroke(eq, cx, false);
 
-    // Night side: the hemisphere away from the sub-solar point.
+    // Coastlines, drawn as an outline rather than a mass.
+    cx.globalAlpha = 0.85;
+    cx.lineWidth = 0.55;
+    for (var i = 0; i < rings.length; i++) stroke(rings[i], cx, true);
+
+    // The unlit half sits back a little.
     cx.save();
     cx.beginPath();
-    cx.arc(ox, oy, R, 0, 6.283);
+    cx.arc(P.ox, P.oy, P.R, 0, 6.283);
     cx.clip();
-    var grad = cx.createRadialGradient(ox, oy, R * 0.15, ox, oy, R);
+    var grad = cx.createRadialGradient(P.ox, P.oy, P.R * 0.2, P.ox, P.oy, P.R);
     grad.addColorStop(0, "rgba(0,0,0,0)");
-    grad.addColorStop(0.62, "rgba(0,0,0,0.35)");
-    grad.addColorStop(1, "rgba(0,0,0,0.8)");
+    grad.addColorStop(1, "rgba(0,0,0,0.6)");
     cx.fillStyle = grad;
+    cx.globalAlpha = 1;
     cx.fillRect(0, 0, size, size);
     cx.restore();
 
-    // Rim
+    // Plate rim
+    cx.globalAlpha = 0.6;
+    cx.lineWidth = 0.7;
     cx.beginPath();
-    cx.arc(ox, oy, R, 0, 6.283);
-    cx.strokeStyle = ink;
-    cx.globalAlpha = 0.35;
-    cx.lineWidth = 0.6;
+    cx.arc(P.ox, P.oy, P.R, 0, 6.283);
     cx.stroke();
     cx.globalAlpha = 1;
   }
