@@ -11,6 +11,45 @@
   var cx = canvas.getContext("2d");
   var rad = Math.PI / 180;
   var rings = null;
+  var reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var breath = 1;
+
+  // Major cities, used only to place lights on the night side.
+  var CITIES = [
+    [41.0,29.0],[51.5,-0.1],[48.9,2.4],[52.5,13.4],[40.4,-3.7],[41.9,12.5],
+    [55.8,37.6],[59.3,18.1],[52.4,4.9],[38.0,23.7],[30.0,31.2],[6.5,3.4],
+    [-26.2,28.0],[-1.3,36.8],[25.2,55.3],[24.7,46.7],[35.7,51.4],[28.6,77.2],
+    [19.1,72.9],[13.1,80.3],[23.8,90.4],[13.8,100.5],[1.35,103.8],[-6.2,106.8],
+    [14.6,121.0],[31.2,121.5],[39.9,116.4],[22.3,114.2],[37.6,127.0],[35.7,139.7],
+    [-33.9,151.2],[-37.8,145.0],[-36.8,174.8],[40.7,-74.0],[34.1,-118.2],[41.9,-87.6],
+    [19.4,-99.1],[4.7,-74.1],[-12.0,-77.0],[-34.6,-58.4],[-23.6,-46.6],[45.5,-73.6]
+  ];
+
+  // Each visit is a fresh impression from the plate: the ruling is re-cut at a
+  // slightly different angle and weight, the way no two prints are identical.
+  var seed = Math.random();
+  var plate = {
+    angle: -Math.PI / 4 + (seed - 0.5) * 0.5,
+    spacing: 2.2 + (seed - 0.5) * 0.7,
+    weight: 0.45 + seed * 0.2,
+    wobble: (seed - 0.5) * 0.8
+  };
+
+  function sunAltAt(date, lat, lon) {
+    var jd = date.getTime() / 86400000 + 2440587.5;
+    var d = jd - 2451545.0;
+    var L = (280.460 + 0.9856474 * d) % 360;
+    var g = ((357.528 + 0.9856003 * d) % 360) * rad;
+    var lam = (L + 1.915 * Math.sin(g) + 0.020 * Math.sin(2 * g)) * rad;
+    var eps = (23.439 - 0.0000004 * d) * rad;
+    var ra = Math.atan2(Math.cos(eps) * Math.sin(lam), Math.cos(lam));
+    var dec = Math.asin(Math.sin(eps) * Math.sin(lam));
+    var ha = (gmst(date) + lon) * rad - ra;
+    return Math.asin(
+      Math.sin(lat * rad) * Math.sin(dec) + Math.cos(lat * rad) * Math.cos(dec) * Math.cos(ha)
+    ) / rad;
+  }
+
 
   function gmst(date) {
     var jd = date.getTime() / 86400000 + 2440587.5;
@@ -139,9 +178,9 @@
       if (detailed) {
         cx.save();
         cx.clip();
-        var step = Math.max(2, Math.round(2.4 * dpr)) / dpr;
+        var step = Math.max(2, Math.round(plate.spacing * dpr)) / dpr;
         cx.globalAlpha = 0.7;
-        cx.fillStyle = hatch(ink, step, -Math.PI / 4, 0.5);
+        cx.fillStyle = hatch(ink, step, plate.angle, plate.weight);
         cx.fillRect(0, 0, size, size);
         cx.restore();
       } else {
@@ -153,6 +192,22 @@
       cx.lineWidth = 0.5;
       cx.stroke();
     }
+
+    // City lights, on the night side only.
+    cx.fillStyle = ink;
+    for (var c = 0; c < CITIES.length; c++) {
+      var la2 = CITIES[c][0], lo2 = CITIES[c][1];
+      var pt = project(lo2, la2);
+      if (!pt) continue;
+      var alt = sunAltAt(now, la2, lo2);
+      if (alt > -6) continue;                       // still daylight there
+      var darkness = Math.min(1, (-alt - 6) / 12);
+      cx.globalAlpha = 0.25 + 0.55 * darkness * breath;
+      cx.beginPath();
+      cx.arc(pt[0], pt[1], detailed ? 0.7 : 0.55, 0, 6.283);
+      cx.fill();
+    }
+    cx.globalAlpha = 1;
 
     // Volume: the limb away from the sun falls off.
     var grad = cx.createRadialGradient(
@@ -182,6 +237,7 @@
       rings = d.rings;
       draw();
       setInterval(draw, 60000);   // Earth turns 0.25° a minute
+      if (!reduced) requestAnimationFrame(pulse);
       addEventListener("resize", draw);
     })
     .catch(function () { el.style.display = "none"; });
