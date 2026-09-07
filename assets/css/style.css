@@ -397,3 +397,12 @@ main, .site-footer { position: relative; z-index: 1; }
   .site-nav { gap: 0.8rem; font-size: 0.68rem; }
   .brand { font-size: 1.2rem; }
 }
+
+/* Anchors clear the sticky header */
+:target,
+section[id],
+details[id],
+.world-group { scroll-margin-top: 92px; }
+@media (max-width: 640px) {
+  :target, section[id], details[id], .world-group { scroll-margin-top: 78px; }
+}
