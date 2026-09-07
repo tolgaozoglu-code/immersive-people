@@ -50,3 +50,5 @@ admin/          Decap CMS panel + config.yml
 assets/css/     style.css (3 tema + 3 font CSS variable ile)
 index.njk       ana sayfa
 ```
+
+<!-- preview build -->
