@@ -1,0 +1,18 @@
+---
+layout: base.njk
+---
+<article class="prod-detail">
+  <div class="prod-hero">
+    <img src="{{ image or keyart }}" alt="{{ title }} keyart">
+  </div>
+  <div class="prod-body">
+    <p class="prod-kicker">{{ category }} · {{ world }}</p>
+    <h1 class="prod-title">{{ title }}</h1>
+    <p class="prod-tagline">{{ tagline }}</p>
+    <p class="prod-synopsis">{{ synopsis }}</p>
+    <div class="hero-ctas">
+      <a class="btn btn-solid" href="mailto:{{ site.email }}">Request Licensing Info</a>
+      <a class="btn btn-ghost" href="/productions/">← All Productions</a>
+    </div>
+  </div>
+</article>

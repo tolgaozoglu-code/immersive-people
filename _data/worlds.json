@@ -1,0 +1,58 @@
+[
+  {
+    "name": "Epic Narratives & Historical Journeys",
+    "slug": "epic-narratives-historical-journeys",
+    "order": 1,
+    "description": "Where history becomes a living, breathing experience",
+    "count": 5
+  },
+  {
+    "name": "Heritage, Identity & Ancient Civilisations",
+    "slug": "heritage-identity-ancient-civilisations",
+    "order": 2,
+    "description": "The deep roots of Anatolian and human memory",
+    "count": 5
+  },
+  {
+    "name": "Science, Cosmos & the Future",
+    "slug": "science-cosmos-the-future",
+    "order": 3,
+    "description": "Between the infinite and the inner universe",
+    "count": 3
+  },
+  {
+    "name": "Nature & Planet",
+    "slug": "nature-planet",
+    "order": 4,
+    "description": "The living world, seen from the inside",
+    "count": 7
+  },
+  {
+    "name": "Istanbul & Urban Stories",
+    "slug": "istanbul-urban-stories",
+    "order": 5,
+    "description": "The city that has never stopped telling stories",
+    "count": 4
+  },
+  {
+    "name": "Art, Craft & Tradition",
+    "slug": "art-craft-tradition",
+    "order": 6,
+    "description": "The forms through which a culture knows itself",
+    "count": 4
+  },
+  {
+    "name": "Mythology & Tradition",
+    "slug": "mythology-tradition",
+    "order": 7,
+    "description": "One journey, many names",
+    "count": 2
+  },
+  {
+    "name": "Interactive & Narrative Experiences",
+    "slug": "interactive-narrative-experiences",
+    "order": 8,
+    "description": "Presence, participation, and the power of a story heard in the dark",
+    "count": 6
+  }
+]

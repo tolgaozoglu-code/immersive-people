@@ -1,0 +1,22 @@
+{
+  "brand": "Immersive People",
+  "theme": "black",
+  "email": "hello@immersivepeople.co",
+  "linkedin": "#",
+  "instagram": "#",
+  "footer_links": [
+    {
+      "label": "Privacy",
+      "url": "#"
+    },
+    {
+      "label": "Terms",
+      "url": "#"
+    },
+    {
+      "label": "Careers",
+      "url": "#"
+    }
+  ],
+  "copyright": "© 2026 Immersive People"
+}

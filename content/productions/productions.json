@@ -1,0 +1,7 @@
+{
+  "tags": [
+    "production"
+  ],
+  "layout": "production.njk",
+  "permalink": "/production/{{ page.fileSlug }}/"
+}

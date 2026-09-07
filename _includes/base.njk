@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="{{ site.theme }}" data-font="{{ appearance.display_font }}">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% if title %}{{ title }} — {% endif %}{{ site.brand }}</title>
+<meta name="description" content="Immersive People professional responsive site.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=League+Gothic&family=Barlow+Condensed:wght@500;600&family=Oswald:wght@400;500;600&family=Rajdhani:wght@400;500;600&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/css/style.css">
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="/#home">{{ site.brand }}</a>
+  <nav class="site-nav" id="site-nav">
+    {% for item in home.nav %}<a href="/{{ item.url }}">{{ item.label }}</a>{% endfor %}
+  </nav>
+  <div class="header-actions">
+    <a class="btn btn-ghost btn-small" href="/#contact">Request a Deck</a>
+    <button class="menu-toggle" id="menu-toggle" aria-expanded="false" aria-controls="site-nav">Menu</button>
+  </div>
+</header>
+
+<main>
+{{ content | safe }}
+</main>
+
+<footer class="site-footer" id="contact-footer">
+  <p>{{ site.copyright }}</p>
+  <nav class="footer-links">
+    {% for l in site.footer_links %}<a href="{{ l.url }}">{{ l.label }}</a>{% endfor %}
+  </nav>
+  <nav class="footer-social">
+    <a href="{{ site.linkedin }}">LinkedIn</a>
+    <a href="{{ site.instagram }}">Instagram</a>
+    <a href="mailto:{{ site.email }}">{{ site.email }}</a>
+  </nav>
+</footer>
+<script src="/assets/js/main.js"></script>
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+<script>
+if (window.netlifyIdentity) {
+  window.netlifyIdentity.on("init", user => {
+    if (!user) {
+      window.netlifyIdentity.on("login", () => { document.location.href = "/admin/"; });
+    }
+  });
+}
+</script>
+</body>
+</html>

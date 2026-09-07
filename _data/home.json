@@ -1,0 +1,186 @@
+{
+  "hero": {
+    "title": "Immersive People",
+    "lede": "A multidisciplinary collective designing immersive content, cultural storytelling and experience strategy for venues, museums, institutions and brands.",
+    "body": "We create story-driven immersive experiences that bring together space, message, sound and visuals — helping cultural destinations and brands attract audiences, strengthen engagement and create memorable public experiences.",
+    "tagline": "Transformative encounters that are felt in the moment, shared beyond the visit, and remembered long after.",
+    "primary_cta": {
+      "label": "See Solutions",
+      "url": "#work"
+    },
+    "secondary_cta": {
+      "label": "Book a Call",
+      "url": "#contact"
+    },
+    "image": "/assets/uploads/hero.jpg"
+  },
+  "quicklinks": [
+    {
+      "mark": "✺",
+      "title": "Our Work",
+      "text": "Immersive experiences that connect people to stories, places and ideas.",
+      "link_label": "View Projects →",
+      "url": "#work"
+    },
+    {
+      "mark": "◎",
+      "title": "Our Approach",
+      "text": "Strategy, storytelling and design working in harmony — from concept to experience.",
+      "link_label": "Learn More →",
+      "url": "#approach"
+    },
+    {
+      "mark": "♟",
+      "title": "Who We Work With",
+      "text": "Venues, museums, institutions and brands creating impact through immersive experiences.",
+      "link_label": "See References →",
+      "url": "#references"
+    },
+    {
+      "mark": "○",
+      "title": "Open Call",
+      "text": "We invite artists, curators, designers and technologists to collaborate or apply to our open calls.",
+      "link_label": "Apply or Nominate →",
+      "url": "#collective"
+    }
+  ],
+  "work_intro": {
+    "title": "The Library",
+    "text": "36 productions. Eight worlds. One licence."
+  },
+  "why": {
+    "title": "Why partners choose us",
+    "intro": "We combine creative excellence with strategic discipline to deliver experiences that matter — for audiences and organisations.",
+    "items": [
+      {
+        "title": "Clear Value",
+        "text": "Strong visions that support audiences, programming goals and measurable impact."
+      },
+      {
+        "title": "Expansive Reach",
+        "text": "Content built for travel across spaces, markets and formats."
+      },
+      {
+        "title": "Cultural Depth",
+        "text": "Narrative nuance spanning heritage, science, nature and human stories."
+      },
+      {
+        "title": "Expert Collaboration",
+        "text": "A network of trusted creators, institutions and cultural leaders."
+      },
+      {
+        "title": "Flexible Models",
+        "text": "Concept-to-content, creative direction and flexible delivery aligned to your needs."
+      }
+    ]
+  },
+  "clients": {
+    "title": "Who We Work With",
+    "logos": [
+      {
+        "name": "VISA"
+      },
+      {
+        "name": "Pfizer"
+      },
+      {
+        "name": "PHILIPS"
+      },
+      {
+        "name": "SOCAR"
+      },
+      {
+        "name": "ANADOLU GROUP"
+      },
+      {
+        "name": "THE BRITISH MUSEUM"
+      },
+      {
+        "name": "UNESCO"
+      },
+      {
+        "name": "BMW"
+      },
+      {
+        "name": "Johnson & Johnson"
+      },
+      {
+        "name": "Vodafone"
+      },
+      {
+        "name": "MAN"
+      },
+      {
+        "name": "Godiva"
+      },
+      {
+        "name": "Messe Frankfurt"
+      },
+      {
+        "name": "ASELSAN"
+      },
+      {
+        "name": "HAVELSAN"
+      },
+      {
+        "name": "İBB"
+      },
+      {
+        "name": "TİM"
+      },
+      {
+        "name": "Turkish Leather Brands"
+      },
+      {
+        "name": "Innovation is GREAT"
+      }
+    ]
+  },
+  "collective": {
+    "title": "Join the Collective",
+    "body": "We are building a network of curators, artists, storytellers, researchers and production partners shaping the next generation of immersive cultural experiences.",
+    "body2": "Bring a subject area, a creative vision or a strategic capability — and join a collective designed to create, license and deliver meaningful immersive work.",
+    "cta_label": "Join the Collective",
+    "cta_url": "#contact"
+  },
+  "insights_section": {
+    "title": "Insights",
+    "view_all_label": "View All Insights →"
+  },
+  "contact": {
+    "title": "Let’s shape your next immersive experience.",
+    "body": "We partner with visionary organisations to craft experiences that inspire audiences and create meaningful cultural impact.",
+    "cta_label": "Request a Deck"
+  },
+  "nav": [
+    {
+      "label": "Home",
+      "url": "#home"
+    },
+    {
+      "label": "Work",
+      "url": "#work"
+    },
+    {
+      "label": "Approach",
+      "url": "#approach"
+    },
+    {
+      "label": "References",
+      "url": "#references"
+    },
+    {
+      "label": "Collective",
+      "url": "#collective"
+    },
+    {
+      "label": "Insights",
+      "url": "#insights"
+    },
+    {
+      "label": "Contact",
+      "url": "#contact"
+    }
+  ],
+  "show_productions": true
+}

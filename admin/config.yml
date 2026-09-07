@@ -1,0 +1,163 @@
+backend:
+  name: git-gateway
+  branch: main
+
+media_folder: "assets/uploads"
+public_folder: "/assets/uploads"
+
+collections:
+  - name: "settings"
+    label: "Site Settings"
+    files:
+      - name: "site"
+        label: "General"
+        file: "_data/site.json"
+        fields:
+          - { label: "Brand Name", name: "brand", widget: "string" }
+          - label: "Theme"
+            name: "theme"
+            widget: "select"
+            default: "black"
+            options:
+              - { label: "Black", value: "black" }
+              - { label: "Light", value: "light" }
+              - { label: "Warm Color", value: "warm" }
+          - { label: "Contact Email", name: "email", widget: "string" }
+          - { label: "LinkedIn URL", name: "linkedin", widget: "string" }
+          - { label: "Instagram URL", name: "instagram", widget: "string" }
+          - label: "Footer Links"
+            name: "footer_links"
+            widget: "list"
+            fields:
+              - { label: "Label", name: "label", widget: "string" }
+              - { label: "URL", name: "url", widget: "string" }
+          - { label: "Copyright Line", name: "copyright", widget: "string" }
+
+  - name: "homepage"
+    label: "Homepage"
+    files:
+      - name: "home"
+        label: "Homepage Content"
+        file: "_data/home.json"
+        fields:
+          - label: "Hero"
+            name: "hero"
+            widget: "object"
+            fields:
+              - { label: "Title", name: "title", widget: "string" }
+              - { label: "Lede", name: "lede", widget: "text" }
+              - { label: "Body", name: "body", widget: "text" }
+              - { label: "Tagline", name: "tagline", widget: "text" }
+              - { label: "Hero Photo", name: "image", widget: "image" }
+              - label: "Primary CTA"
+                name: "primary_cta"
+                widget: "object"
+                fields:
+                  - { label: "Label", name: "label", widget: "string" }
+                  - { label: "URL", name: "url", widget: "string" }
+              - label: "Secondary CTA"
+                name: "secondary_cta"
+                widget: "object"
+                fields:
+                  - { label: "Label", name: "label", widget: "string" }
+                  - { label: "URL", name: "url", widget: "string" }
+          - label: "Quick Links"
+            name: "quicklinks"
+            widget: "list"
+            fields:
+              - { label: "Mark (symbol)", name: "mark", widget: "string" }
+              - { label: "Title", name: "title", widget: "string" }
+              - { label: "Text", name: "text", widget: "text" }
+              - { label: "Link Label", name: "link_label", widget: "string" }
+              - { label: "URL", name: "url", widget: "string" }
+          - { label: "Show Productions Section", name: "show_productions", widget: "boolean", default: true }
+          - label: "Library Section Intro"
+            name: "work_intro"
+            widget: "object"
+            fields:
+              - { label: "Title", name: "title", widget: "string" }
+              - { label: "Text", name: "text", widget: "text" }
+          - label: "Why Partners Choose Us"
+            name: "why"
+            widget: "object"
+            fields:
+              - { label: "Title", name: "title", widget: "string" }
+              - { label: "Intro", name: "intro", widget: "text" }
+              - label: "Items"
+                name: "items"
+                widget: "list"
+                fields:
+                  - { label: "Title", name: "title", widget: "string" }
+                  - { label: "Text", name: "text", widget: "text" }
+          - label: "Clients"
+            name: "clients"
+            widget: "object"
+            fields:
+              - { label: "Title", name: "title", widget: "string" }
+              - label: "Logos"
+                name: "logos"
+                widget: "list"
+                fields:
+                  - { label: "Name", name: "name", widget: "string" }
+                  - { label: "Logo Image (optional, replaces text)", name: "image", widget: "image", required: false }
+          - label: "Join the Collective"
+            name: "collective"
+            widget: "object"
+            fields:
+              - { label: "Title", name: "title", widget: "string" }
+              - { label: "Body", name: "body", widget: "text" }
+              - { label: "Body 2", name: "body2", widget: "text" }
+              - { label: "CTA Label", name: "cta_label", widget: "string" }
+              - { label: "CTA URL", name: "cta_url", widget: "string" }
+          - label: "Insights Section"
+            name: "insights_section"
+            widget: "object"
+            fields:
+              - { label: "Title", name: "title", widget: "string" }
+              - { label: "View All Label", name: "view_all_label", widget: "string" }
+          - label: "Contact / Closing CTA"
+            name: "contact"
+            widget: "object"
+            fields:
+              - { label: "Title", name: "title", widget: "string" }
+              - { label: "Body", name: "body", widget: "text" }
+              - { label: "CTA Label", name: "cta_label", widget: "string" }
+          - label: "Navigation"
+            name: "nav"
+            widget: "list"
+            fields:
+              - { label: "Label", name: "label", widget: "string" }
+              - { label: "URL", name: "url", widget: "string" }
+
+  - name: "insights"
+    label: "Insights"
+    folder: "content/insights"
+    create: true
+    slug: "{{slug}}"
+    filter: { field: "title", pattern: ".+" }
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Excerpt", name: "excerpt", widget: "text" }
+      - { label: "Date", name: "date", widget: "datetime", format: "YYYY-MM-DD", time_format: false }
+      - { label: "Body", name: "body", widget: "markdown" }
+
+  - name: "productions"
+    label: "Productions"
+    folder: "content/productions"
+    create: true
+    slug: "{{slug}}"
+    filter: { field: "title", pattern: ".+" }
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Tagline", name: "tagline", widget: "string" }
+      - { label: "Synopsis", name: "synopsis", widget: "text" }
+      - label: "World"
+        name: "world"
+        widget: "select"
+        options: ["Epic Narratives & Historical Journeys", "Heritage, Identity & Ancient Civilisations", "Science, Cosmos & the Future", "Nature & Planet", "Istanbul & Urban Stories", "Art, Craft & Tradition", "Mythology & Tradition", "Interactive & Narrative Experiences"]
+      - { label: "Category Label", name: "category", widget: "string" }
+      - { label: "Featured (homepage)", name: "featured", widget: "boolean", default: false }
+      - { label: "Order (within world)", name: "order", widget: "number", default: 0 }
+      - { label: "Keyart (generated)", name: "keyart", widget: "string", required: false }
+      - { label: "Custom Image (optional, replaces keyart)", name: "image", widget: "image", required: false }
+      - { label: "World Slug (do not edit)", name: "world_slug", widget: "hidden" }

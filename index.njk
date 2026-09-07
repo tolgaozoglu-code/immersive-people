@@ -1,0 +1,107 @@
+---
+layout: base.njk
+permalink: /
+---
+<section class="hero" id="home">
+  <div class="hero-left">
+    <h1 class="hero-title">{{ home.hero.title }}</h1>
+    <p class="hero-lede">{{ home.hero.lede }}</p>
+    <p class="hero-body">{{ home.hero.body }}</p>
+    <p class="hero-tagline">{{ home.hero.tagline }}</p>
+    <div class="hero-ctas">
+      <a class="btn btn-solid" href="{{ home.hero.primary_cta.url }}">{{ home.hero.primary_cta.label }}</a>
+      <a class="btn btn-ghost" href="{{ home.hero.secondary_cta.url }}">{{ home.hero.secondary_cta.label }}</a>
+    </div>
+  </div>
+  <div class="hero-media">
+    <img src="{{ home.hero.image }}" alt="{{ home.hero.title }}">
+  </div>
+</section>
+
+<section class="quicklinks">
+  {% for q in home.quicklinks %}
+  <a class="quicklink" href="{{ q.url }}">
+    <span class="quicklink-mark">{{ q.mark }}</span>
+    <span class="quicklink-title">{{ q.title }}</span>
+    <span class="quicklink-text">{{ q.text }}</span>
+    <span class="quicklink-more">{{ q.link_label }}</span>
+  </a>
+  {% endfor %}
+</section>
+
+{% if home.show_productions %}
+<section class="section" id="work">
+  <div class="section-head">
+    <h2 class="section-title">{{ home.work_intro.title }}</h2>
+    <a class="view-all" href="/productions/">View All Productions →</a>
+  </div>
+  <p class="section-intro">{{ home.work_intro.text }}</p>
+  <div class="world-chips">
+    {% for w in worlds %}<a class="world-chip" href="/productions/#{{ w.slug }}">{{ w.name }} <span>{{ w.count }}</span></a>{% endfor %}
+  </div>
+  <div class="prod-grid">
+    {% for p in collections.production %}
+    {% if p.data.featured %}
+    <a class="prod-card" href="{{ p.url }}">
+      <span class="prod-art"><img src="{{ p.data.image or p.data.keyart }}" alt="{{ p.data.title }}" loading="lazy"></span>
+      <span class="prod-cat">{{ p.data.category }}</span>
+      <span class="prod-name">{{ p.data.title }}</span>
+      <span class="prod-tag">{{ p.data.tagline }}</span>
+    </a>
+    {% endif %}
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<section class="section" id="approach">
+  <h2 class="section-title">{{ home.why.title }}</h2>
+  <p class="section-intro">{{ home.why.intro }}</p>
+  <div class="why-grid">
+    {% for item in home.why.items %}
+    <article class="why-item">
+      <h3>{{ item.title }}</h3>
+      <p>{{ item.text }}</p>
+    </article>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="section" id="references">
+  <h2 class="section-title">{{ home.clients.title }}</h2>
+  <div class="client-row">
+    {% for c in home.clients.logos %}
+    {% set autologo = logo_files[c.name] %}
+    {% if c.image %}<img class="client-img" src="{{ c.image }}" alt="{{ c.name }}">{% elif autologo %}<img class="client-img" src="{{ autologo }}" alt="{{ c.name }}">{% else %}<span class="client">{{ c.name }}</span>{% endif %}
+    {% endfor %}
+  </div>
+</section>
+
+<section class="section section-band" id="collective">
+  <h2 class="section-title">{{ home.collective.title }}</h2>
+  <p class="section-intro">{{ home.collective.body }}</p>
+  <p class="section-intro">{{ home.collective.body2 }}</p>
+  <a class="btn btn-solid" href="{{ home.collective.cta_url }}">{{ home.collective.cta_label }}</a>
+</section>
+
+<section class="section" id="insights">
+  <div class="section-head">
+    <h2 class="section-title">{{ home.insights_section.title }}</h2>
+    <a class="view-all" href="/insights/{{ collections.insights[0].fileSlug }}/">{{ home.insights_section.view_all_label }}</a>
+  </div>
+  <div class="insights-grid">
+    {% for post in collections.insights %}
+    <article class="insight-card">
+      <h3><a href="{{ post.url }}">{{ post.data.title }}</a></h3>
+      <p>{{ post.data.excerpt }}</p>
+      <a class="read-more" href="{{ post.url }}">Read Article →</a>
+    </article>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="section contact" id="contact">
+  <h2 class="contact-title">{{ home.contact.title }}</h2>
+  <p class="section-intro">{{ home.contact.body }}</p>
+  <a class="btn btn-solid" href="mailto:{{ site.email }}">{{ home.contact.cta_label }}</a>
+</section>

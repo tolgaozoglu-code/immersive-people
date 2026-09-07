@@ -1,0 +1,29 @@
+---
+layout: base.njk
+title: Productions
+permalink: /productions/
+---
+<section class="section">
+  <h2 class="section-title">The Library</h2>
+  <p class="section-intro">36 productions. Eight worlds. One licence.</p>
+  {% for w in worlds %}
+  <div class="world-group" id="{{ w.slug }}">
+    <div class="world-head">
+      <h3 class="world-title">{{ w.name }}</h3>
+      <p class="world-desc">{{ w.description }}</p>
+    </div>
+    <div class="prod-grid">
+      {% for p in collections.production %}
+      {% if p.data.world == w.name %}
+      <a class="prod-card" href="{{ p.url }}">
+        <span class="prod-art"><img src="{{ p.data.image or p.data.keyart }}" alt="{{ p.data.title }}" loading="lazy"></span>
+        <span class="prod-cat">{{ p.data.category }}</span>
+        <span class="prod-name">{{ p.data.title }}</span>
+        <span class="prod-tag">{{ p.data.tagline }}</span>
+      </a>
+      {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+  {% endfor %}
+</section>

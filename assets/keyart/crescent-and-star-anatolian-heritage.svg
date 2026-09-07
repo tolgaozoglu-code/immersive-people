@@ -1,0 +1,17 @@
+<svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg" role="img">
+<rect width="900" height="600" fill="#F7F6F2"/>
+<rect x="60" y="40" width="780" height="66" fill="none" stroke="#121212" stroke-width="1.4" opacity="0.64"/>
+<rect x="60" y="120" width="780" height="47" fill="none" stroke="#121212" stroke-width="1.4" opacity="0.50"/>
+<rect x="60" y="183" width="780" height="37" fill="none" stroke="#121212" stroke-width="1.4" opacity="0.55"/>
+<rect x="60" y="236" width="780" height="41" fill="none" stroke="#121212" stroke-width="1.4" opacity="0.48"/>
+<rect x="60" y="291" width="780" height="19" fill="none" stroke="#121212" stroke-width="1.4" opacity="0.71"/>
+<line x1="347" y1="291" x2="464" y2="310" stroke="#55534E" stroke-width="1" opacity=".5"/>
+<rect x="60" y="316" width="780" height="18" fill="none" stroke="#121212" stroke-width="1.4" opacity="0.29"/>
+<line x1="579" y1="316" x2="694" y2="335" stroke="#55534E" stroke-width="1" opacity=".5"/>
+<rect x="60" y="347" width="780" height="32" fill="none" stroke="#121212" stroke-width="1.4" opacity="0.61"/>
+<rect x="60" y="393" width="780" height="63" fill="none" stroke="#121212" stroke-width="1.4" opacity="0.64"/>
+<line x1="159" y1="393" x2="207" y2="456" stroke="#55534E" stroke-width="1" opacity=".5"/>
+<rect x="60" y="467" width="780" height="52" fill="none" stroke="#121212" stroke-width="1.4" opacity="0.64"/>
+<rect x="60" y="531" width="780" height="40" fill="none" stroke="#121212" stroke-width="1.4" opacity="0.79"/>
+<line x1="154" y1="531" x2="251" y2="572" stroke="#55534E" stroke-width="1" opacity=".5"/>
+</svg>

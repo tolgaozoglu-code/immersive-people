@@ -1,0 +1,12 @@
+{
+  "name": "immersive-people",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/fetch-logos.mjs && eleventy",
+    "start": "eleventy --serve"
+  },
+  "devDependencies": {
+    "@11ty/eleventy": "^2.0.1"
+  }
+}

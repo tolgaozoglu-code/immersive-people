@@ -1,0 +1,10 @@
+---
+layout: base.njk
+---
+<article class="article">
+  <p class="article-date">{{ page.date.toISOString().slice(0,10) }}</p>
+  <h1 class="article-title">{{ title }}</h1>
+  <p class="article-excerpt">{{ excerpt }}</p>
+  <div class="article-body">{{ content | safe }}</div>
+  <a class="btn btn-ghost" href="/#insights">← Back to Insights</a>
+</article>

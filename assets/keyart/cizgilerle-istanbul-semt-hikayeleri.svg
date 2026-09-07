@@ -1,0 +1,24 @@
+<svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg" role="img">
+<rect width="900" height="600" fill="#F7F6F2"/>
+<rect x="60" y="375" width="17" height="185" fill="none" stroke="#121212" stroke-width="1.4" opacity="0.38"/>
+<rect x="83" y="202" width="19" height="358" fill="none" stroke="#121212" stroke-width="1.4" opacity="0.66"/>
+<rect x="115" y="439" width="28" height="121" fill="none" stroke="#121212" stroke-width="1.4" opacity="0.72"/>
+<rect x="154" y="298" width="30" height="262" fill="none" stroke="#121212" stroke-width="1.4" opacity="0.51"/>
+<path d="M 154 298 A 15 15 0 0 1 184 298" fill="none" stroke="#121212" stroke-width="1.4" opacity=".7"/>
+<rect x="197" y="385" width="25" height="175" fill="none" stroke="#121212" stroke-width="1.4" opacity="0.53"/>
+<rect x="248" y="360" width="23" height="200" fill="none" stroke="#121212" stroke-width="1.4" opacity="0.54"/>
+<path d="M 248 360 A 11 11 0 0 1 270 360" fill="none" stroke="#121212" stroke-width="1.4" opacity=".7"/>
+<rect x="279" y="198" width="57" height="362" fill="none" stroke="#121212" stroke-width="1.4" opacity="0.70"/>
+<path d="M 279 198 A 29 29 0 0 1 336 198" fill="none" stroke="#121212" stroke-width="1.4" opacity=".7"/>
+<rect x="355" y="453" width="20" height="107" fill="none" stroke="#121212" stroke-width="1.4" opacity="0.42"/>
+<rect x="395" y="475" width="56" height="85" fill="none" stroke="#121212" stroke-width="1.4" opacity="0.58"/>
+<rect x="462" y="188" width="53" height="372" fill="none" stroke="#121212" stroke-width="1.4" opacity="0.79"/>
+<rect x="522" y="310" width="40" height="250" fill="none" stroke="#121212" stroke-width="1.4" opacity="0.61"/>
+<rect x="572" y="225" width="49" height="335" fill="none" stroke="#121212" stroke-width="1.4" opacity="0.38"/>
+<rect x="635" y="301" width="27" height="259" fill="none" stroke="#121212" stroke-width="1.4" opacity="0.41"/>
+<rect x="681" y="353" width="57" height="207" fill="none" stroke="#121212" stroke-width="1.4" opacity="0.40"/>
+<rect x="762" y="395" width="27" height="165" fill="none" stroke="#121212" stroke-width="1.4" opacity="0.74"/>
+<path d="M 762 395 A 14 14 0 0 1 789 395" fill="none" stroke="#121212" stroke-width="1.4" opacity=".7"/>
+<rect x="806" y="257" width="36" height="303" fill="none" stroke="#121212" stroke-width="1.4" opacity="0.58"/>
+<line x1="40" y1="560" x2="860" y2="560" stroke="#121212" stroke-width="2"/>
+</svg>
