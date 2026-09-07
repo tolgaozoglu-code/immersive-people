@@ -272,3 +272,16 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--ink); outline-o
   .client { font-size: 1rem; }
   .refs-track { animation-duration: 32s; }
 }
+
+/* Quicklinks — tidy borders per breakpoint */
+@media (max-width: 960px) {
+  .quicklinks { border-bottom: none; }
+}
+@media (max-width: 640px) {
+  .quicklinks { border-bottom: 1px solid var(--line); }
+  .quicklink,
+  .quicklink:first-child,
+  .quicklink:nth-child(odd) { border-left: none; border-right: none; }
+  .quicklink { border-bottom: 1px solid var(--line); }
+  .quicklink:last-child { border-bottom: none; }
+}
