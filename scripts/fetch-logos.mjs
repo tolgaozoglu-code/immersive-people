@@ -45,42 +45,50 @@ const TARGET = 150; // sqrt(mark width * mark height)
 
 async function normalise(buf) {
   if (!sharp) return buf;
-  const trimmed = await sharp(buf).trim({ threshold: 8 }).png().toBuffer();
-  const meta = await sharp(trimmed).metadata();
-  const W = meta.width, H = meta.height, N = W * H;
+  // Kenar örneklemesi kırpmadan ÖNCE yapılır: kırpılmış görüntüde markanın
+  // kendi rengi kenara dayanır ve yanlışlıkla zemin sanılır.
+  const { data, info } = await sharp(buf).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+  const W = info.width, H = info.height, CH = info.channels;
+  const at = (x, y) => (y * W + x) * CH;
 
-  // True per-pixel alpha, derived by compositing over black and white:
-  // lumW - lumB == (1 - alpha) * 255, independent of the mark's own colour.
-  const overBlack = await sharp(trimmed).flatten({ background: "#000000" }).greyscale().raw().toBuffer();
-  const overWhite = await sharp(trimmed).flatten({ background: "#ffffff" }).greyscale().raw().toBuffer();
+  // Background colour, sampled from the outer border. Artwork often ships with
+  // its own panel (white, black or brand-coloured); the mark is whatever
+  // differs from that panel, not simply whatever is dark or light.
+  let br = 0, bg = 0, bb = 0, bn = 0, transparentBorder = 0, borderTotal = 0;
+  const edge = (x, y) => {
+    const i = at(x, y);
+    borderTotal++;
+    if (data[i + 3] < 128) { transparentBorder++; return; }
+    br += data[i]; bg += data[i + 1]; bb += data[i + 2]; bn++;
+  };
+  for (let x = 0; x < W; x++) { edge(x, 0); edge(x, H - 1); }
+  for (let y = 0; y < H; y++) { edge(0, y); edge(W - 1, y); }
+  const borderIsTransparent = transparentBorder / borderTotal > 0.5;
+  const bgR = bn ? br / bn : 255, bgG = bn ? bg / bn : 255, bgB = bn ? bb / bn : 255;
 
-  const A = new Float32Array(N);   // alpha 0..1
-  const C = new Float32Array(N);   // mark luminance 0..1
-  let covered = 0, lumSum = 0, lumCount = 0;
-  for (let i = 0; i < N; i++) {
-    const a = Math.min(1, Math.max(0, 1 - (overWhite[i] - overBlack[i]) / 255));
-    A[i] = a;
-    C[i] = a > 0.01 ? Math.min(1, overBlack[i] / 255 / a) : 0;
-    if (a > 0.5) { covered++; lumSum += C[i]; lumCount++; }
+  const N = W * H;
+  const raw = new Float32Array(N);
+  let maxDist = 0;
+  for (let p = 0; p < N; p++) {
+    const i = p * CH;
+    const a = data[i + 3] / 255;
+    if (borderIsTransparent) {
+      raw[p] = a;                       // shape already described by alpha
+    } else {
+      const d = Math.max(
+        Math.abs(data[i] - bgR),
+        Math.abs(data[i + 1] - bgG),
+        Math.abs(data[i + 2] - bgB)
+      ) / 255;
+      raw[p] = a * d;                   // distance from the panel colour
+      if (raw[p] > maxDist) maxDist = raw[p];
+    }
   }
-  const coverage = covered / N;
-  const meanLum = lumCount ? lumSum / lumCount : 0;
 
-  // Spread of tone inside the opaque area: a background panel holds a mark of
-  // a different tone, whereas a solid mark is uniform.
-  let varSum = 0;
-  for (let i = 0; i < N; i++) if (A[i] > 0.5) varSum += (C[i] - meanLum) ** 2;
-  const spread = lumCount ? Math.sqrt(varSum / lumCount) : 0;
-
-  // High coverage means the artwork carries its own opaque background panel:
-  // the mark is then the part that differs from that panel. Otherwise the
-  // alpha channel already describes the mark and colour is irrelevant.
   const alpha = Buffer.allocUnsafe(N);
-  for (let i = 0; i < N; i++) {
-    let v;
-    if (coverage > 0.85 && spread > 0.05) v = A[i] * (meanLum > 0.5 ? 1 - C[i] : C[i]);
-    else v = A[i];
-    alpha[i] = Math.round(Math.min(1, Math.max(0, v)) * 255);
+  const gain = borderIsTransparent ? 1 : (maxDist > 0.02 ? 1 / maxDist : 1);
+  for (let p = 0; p < N; p++) {
+    alpha[p] = Math.round(Math.min(1, raw[p] * gain) * 255);
   }
 
   const white = Buffer.alloc(N * 3, 255);
@@ -89,7 +97,6 @@ async function normalise(buf) {
     .png()
     .toBuffer();
 
-  // Re-trim: the silhouette may have gained transparent margins.
   const tight = await sharp(silhouette).trim({ threshold: 4 }).png().toBuffer();
   const tm = await sharp(tight).metadata();
 
