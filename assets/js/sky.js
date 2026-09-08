@@ -127,9 +127,10 @@
   // at midday, amber near the horizon, thin and blue at night. Only that light
   // changes; the rest of the frame stays neutral.
   var LIGHT = {
-    night:  { b: 0.86, c: 1.16, h: 178, s: 1.5, o: 0.30 },
-    golden: { b: 0.98, c: 1.08, h: 352, s: 2.2, o: 0.62 },
-    day:    { b: 1.06, c: 1.02, h: 300, s: 0.35, o: 0.55 }
+    // b/c/blur/o shape the doorway light; pb/pc lift or sink the room around it.
+    night:  { b: 0.30, c: 9.0, blur: 1.5, o: 0.20, pb: 0.82, pc: 1.22 },
+    golden: { b: 0.44, c: 6.0, blur: 6.0, o: 0.72, pb: 0.96, pc: 1.10 },
+    day:    { b: 0.56, c: 4.2, blur: 11.0, o: 0.95, pb: 1.06, pc: 1.00 }
   };
 
   function lerp(a, b, t) { return a + (b - a) * t; }
@@ -142,10 +143,11 @@
     else { from = to = LIGHT.day; t = 0; }
     t = t * t * (3 - 2 * t);
     var r = document.documentElement.style;
-    r.setProperty("--ph-b", lerp(from.b, to.b, t).toFixed(3));
-    r.setProperty("--ph-c", lerp(from.c, to.c, t).toFixed(3));
-    r.setProperty("--glow-h", lerp(from.h, to.h, t).toFixed(1) + "deg");
-    r.setProperty("--glow-s", lerp(from.s, to.s, t).toFixed(2));
+    r.setProperty("--ph-b", lerp(from.pb, to.pb, t).toFixed(3));
+    r.setProperty("--ph-c", lerp(from.pc, to.pc, t).toFixed(3));
+    r.setProperty("--glow-b", lerp(from.b, to.b, t).toFixed(3));
+    r.setProperty("--glow-c", lerp(from.c, to.c, t).toFixed(2));
+    r.setProperty("--glow-blur", lerp(from.blur, to.blur, t).toFixed(2) + "px");
     r.setProperty("--glow-o", lerp(from.o, to.o, t).toFixed(3));
   }
 

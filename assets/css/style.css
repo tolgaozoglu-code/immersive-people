@@ -2,7 +2,7 @@
 
 :root {
   --ph-b: 1; --ph-c: 1.06;
-  --glow-h: 0deg; --glow-s: 1; --glow-o: 0.5;
+  --glow-b: 0.45; --glow-c: 6; --glow-blur: 5px; --glow-o: 0.5;
   --font-body: "Rajdhani", sans-serif;
   --font-serif: "Libre Baskerville", serif;
   --maxw: 1180px;
@@ -89,8 +89,9 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--ink); outline-o
   position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
   animation: heroDrift 36s ease-in-out infinite alternate;
   mix-blend-mode: screen; pointer-events: none;
-  filter: grayscale(1) brightness(0.42) contrast(6) sepia(1)
-          hue-rotate(var(--glow-h)) saturate(var(--glow-s));
+  /* Monochrome throughout: the hour changes how far the light reaches and how
+     hard its edge is, not its colour. */
+  filter: grayscale(1) brightness(var(--glow-b)) contrast(var(--glow-c)) blur(var(--glow-blur));
   opacity: var(--glow-o);
   transition: filter 4s linear, opacity 4s linear;
 }
