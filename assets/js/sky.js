@@ -134,6 +134,8 @@
 
   function frameFor(alt, climbing) {
     var stops = climbing ? RISING : FALLING;
+    // Outside the range the sequence simply holds its end frame.
+    alt = Math.max(-16, Math.min(16, alt));
     for (var i = 0; i < stops.length - 1; i++) {
       var a = stops[i], b = stops[i + 1];
       var lo = Math.min(a[0], b[0]), hi = Math.max(a[0], b[0]);
@@ -143,8 +145,7 @@
         return { from: a[1], to: b[1], t: t };
       }
     }
-    var edge = alt > 0 ? stops[stops.length - 1] : stops[0];
-    if (climbing) edge = alt > 0 ? stops[stops.length - 1] : stops[0];
+    var edge = stops[0];
     return { from: edge[1], to: edge[1], t: 0 };
   }
 
