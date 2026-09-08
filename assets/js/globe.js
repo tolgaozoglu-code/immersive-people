@@ -78,6 +78,15 @@
     return cx.createPattern(c, "repeat");
   }
 
+  function viewVector(lonDeg, latDeg) {
+    var lon = lonDeg * rad, lat = latDeg * rad, dl = lon - P.lon0;
+    return {
+      x: Math.cos(lat) * Math.sin(dl),
+      y: P.cosLat0 * Math.sin(lat) - P.sinLat0 * Math.cos(lat) * Math.cos(dl),
+      z: P.sinLat0 * Math.sin(lat) + P.cosLat0 * Math.cos(lat) * Math.cos(dl)
+    };
+  }
+
   function draw() {
     if (!rings) return;
     var size = el.clientWidth || 40;
@@ -155,16 +164,35 @@
     }
 
     // Volume: the limb away from the sun falls off.
-    var grad = cx.createRadialGradient(
-      P.ox - P.R * 0.2, P.oy - P.R * 0.2, P.R * 0.1,
-      P.ox, P.oy, P.R
-    );
-    grad.addColorStop(0, "rgba(0,0,0,0)");
-    grad.addColorStop(0.6, "rgba(0,0,0,0.2)");
-    grad.addColorStop(1, "rgba(0,0,0,0.65)");
+    // True terminator: each point on the sphere is shaded by the angle its
+    // surface makes with the sun. A radial fade cannot express this and shows
+    // as a band; this is the real division between day and night.
+    var sv = viewVector(sun.lon, sun.lat);
+    var W = Math.max(1, Math.round(P.R * 2 * dpr));
+    var shade = document.createElement("canvas");
+    shade.width = shade.height = W;
+    var sc = shade.getContext("2d");
+    var img = sc.createImageData(W, W);
+    var px = img.data;
+    for (var yy = 0; yy < W; yy++) {
+      for (var xx = 0; xx < W; xx++) {
+        var nx = (xx + 0.5) / W * 2 - 1;
+        var ny = 1 - (yy + 0.5) / W * 2;
+        var r2 = nx * nx + ny * ny;
+        var o = (yy * W + xx) * 4;
+        if (r2 > 1) { px[o + 3] = 0; continue; }
+        var nz = Math.sqrt(1 - r2);
+        var lum = nx * sv.x + ny * sv.y + nz * sv.z;      // Lambert term
+        var t = (lum + 0.18) / 0.5;                        // soft twilight band
+        t = t < 0 ? 0 : t > 1 ? 1 : t;
+        t = t * t * (3 - 2 * t);
+        px[o] = px[o + 1] = px[o + 2] = 0;
+        px[o + 3] = Math.round((1 - t) * 190);
+      }
+    }
+    sc.putImageData(img, 0, 0);
     cx.globalAlpha = 1;
-    cx.fillStyle = grad;
-    cx.fillRect(0, 0, size, size);
+    cx.drawImage(shade, P.ox - P.R, P.oy - P.R, P.R * 2, P.R * 2);
     cx.restore();
 
     // Rim
