@@ -130,8 +130,8 @@
     // The stars are up in daylight too; the sun only outshines them. They
     // recede rather than disappear.
     var night = Math.max(0, Math.min(1, (-alt - 2) / 10));
-    starVisibility = 0.22 + 0.78 * night;
-    if (host) host.style.opacity = (0.55 * starVisibility).toFixed(3);
+    starVisibility = 0.20 + 1.30 * night;
+    if (host) host.style.opacity = Math.min(0.85, 0.75 * starVisibility).toFixed(3);
   }
 
   var stars = null;
