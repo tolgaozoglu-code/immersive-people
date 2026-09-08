@@ -122,8 +122,34 @@
     return "rgb(" + c[0] + "," + c[1] + "," + c[2] + ")";
   }
 
+
+  // The light in the photographs follows the light outside: cool and low at
+  // night, amber near the horizon, open and neutral at midday.
+  var LIGHT = {
+    night:  { b: 0.62, s: 0.30, h: 195, c: 1.22 },
+    golden: { b: 0.95, s: 0.55, h: 355, c: 1.10 },
+    day:    { b: 1.14, s: 0.06, h: 0,   c: 1.02 }
+  };
+
+  function lerp(a, b, t) { return a + (b - a) * t; }
+
+  function photoLight(alt) {
+    var from, to, t;
+    if (alt <= -18) { from = to = LIGHT.night; t = 0; }
+    else if (alt <= -4) { from = LIGHT.night; to = LIGHT.golden; t = (alt + 18) / 14; }
+    else if (alt <= 12) { from = LIGHT.golden; to = LIGHT.day; t = (alt + 4) / 16; }
+    else { from = to = LIGHT.day; t = 0; }
+    t = t * t * (3 - 2 * t);
+    var r = document.documentElement.style;
+    r.setProperty("--ph-b", lerp(from.b, to.b, t).toFixed(3));
+    r.setProperty("--ph-s", lerp(from.s, to.s, t).toFixed(3));
+    r.setProperty("--ph-h", lerp(from.h, to.h, t).toFixed(1) + "deg");
+    r.setProperty("--ph-c", lerp(from.c, to.c, t).toFixed(3));
+  }
+
   function applyAmbience() {
     var alt = sunAltitude(new Date(), obs.lat, obs.lon);
+    photoLight(alt);
     if (adaptive) {
       document.documentElement.style.setProperty("--bg", tint(alt));
     }
