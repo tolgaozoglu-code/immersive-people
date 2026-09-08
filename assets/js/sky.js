@@ -123,12 +123,13 @@
   }
 
 
-  // The light in the photographs follows the light outside: cool and low at
-  // night, amber near the horizon, open and neutral at midday.
+  // The light through the doorway follows the light outside: white and strong
+  // at midday, amber near the horizon, thin and blue at night. Only that light
+  // changes; the rest of the frame stays neutral.
   var LIGHT = {
-    night:  { b: 0.62, s: 0.30, h: 195, c: 1.22 },
-    golden: { b: 0.95, s: 0.55, h: 355, c: 1.10 },
-    day:    { b: 1.14, s: 0.06, h: 360, c: 1.02 }
+    night:  { b: 0.86, c: 1.16, h: 178, s: 1.5, o: 0.30 },
+    golden: { b: 0.98, c: 1.08, h: 352, s: 2.2, o: 0.62 },
+    day:    { b: 1.06, c: 1.02, h: 300, s: 0.35, o: 0.55 }
   };
 
   function lerp(a, b, t) { return a + (b - a) * t; }
@@ -142,11 +143,11 @@
     t = t * t * (3 - 2 * t);
     var r = document.documentElement.style;
     r.setProperty("--ph-b", lerp(from.b, to.b, t).toFixed(3));
-    r.setProperty("--ph-s", lerp(from.s, to.s, t).toFixed(3));
-    r.setProperty("--ph-h", lerp(from.h, to.h, t).toFixed(1) + "deg");
     r.setProperty("--ph-c", lerp(from.c, to.c, t).toFixed(3));
+    r.setProperty("--glow-h", lerp(from.h, to.h, t).toFixed(1) + "deg");
+    r.setProperty("--glow-s", lerp(from.s, to.s, t).toFixed(2));
+    r.setProperty("--glow-o", lerp(from.o, to.o, t).toFixed(3));
   }
-
 
   // Preview switch: append ?sky=21:30 to see the site at that hour today.
   // Without it the real clock is used.
