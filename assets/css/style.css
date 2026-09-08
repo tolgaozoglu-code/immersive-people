@@ -108,9 +108,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--ink); outline-o
 .view-all { color: var(--muted); }
 .view-all:hover { color: var(--ink); }
 .section-band { background: var(--band); max-width: none; }
-.section-band > * { max-width: var(--maxw); margin-left: auto; margin-right: auto; display: block; }
-.section-band .btn { display: inline-block; margin-left: 0; }
-.section-band h2, .section-band p { padding: 0 0; }
+.band-inner { max-width: var(--maxw); margin: 0 auto; }
 
 /* Work */
 .prod-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
