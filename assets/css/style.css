@@ -2,7 +2,7 @@
 
 :root {
   --ph-b: 1; --ph-c: 1.06;
-  --glow-b: 0.45; --glow-c: 6; --glow-blur: 5px; --glow-o: 0.5; --night-o: 0;
+  --night-mix: 0;
   --font-body: "Rajdhani", sans-serif;
   --font-serif: "Libre Baskerville", serif;
   --maxw: 1180px;
@@ -80,30 +80,19 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--ink); outline-o
 .hero-media img {
   position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
   animation: heroDrift 36s ease-in-out infinite alternate; will-change: transform;
-  filter: grayscale(1) brightness(var(--ph-b)) contrast(var(--ph-c));
-  transition: filter 3s linear;
+  filter: grayscale(1) contrast(1.06);
 }
 /* Only the light coming through the doorway carries the hour's colour: the
    bright areas are isolated and tinted, the rest of the frame stays neutral. */
-.hero-glow, .hero-night {
+/* Two photographs of the same place, one by day and one after dark. The hour
+   decides which one you are looking at. */
+.hero-night-photo {
   position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
   animation: heroDrift 36s ease-in-out infinite alternate;
+  filter: grayscale(1) contrast(1.06);
+  opacity: var(--night-mix, 0);
+  transition: opacity 4s linear;
   pointer-events: none;
-  transition: filter 4s linear, opacity 4s linear;
-}
-/* Daylight spilling in through the opening. */
-.hero-glow {
-  mix-blend-mode: screen;
-  filter: grayscale(1) brightness(var(--glow-b)) contrast(var(--glow-c)) blur(var(--glow-blur));
-  opacity: var(--glow-o);
-}
-/* After sunset the opening is not a bright doorway any more: the same bright
-   areas are inverted and multiplied back, so what lies outside goes dark while
-   the interior is left as it is. */
-.hero-night {
-  mix-blend-mode: multiply;
-  filter: grayscale(1) brightness(0.5) contrast(5.5) invert(1) blur(2px);
-  opacity: var(--night-o);
 }
 @keyframes heroDrift {
   from { transform: scale(1.02) translate(0, 0); }
@@ -263,8 +252,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--ink); outline-o
 .coll-hero-media { position: absolute; inset: 0; }
 .coll-hero-media img {
   width: 100%; height: 100%; object-fit: cover;
-  filter: grayscale(1) brightness(var(--ph-b)) contrast(var(--ph-c));
-  transition: filter 3s linear;
+  filter: grayscale(1) contrast(1.06);
 }
 .coll-hero-media::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0.15) 30%, rgba(0,0,0,0.78)); }
 .coll-hero-text { position: relative; max-width: var(--maxw); width: 100%; margin: 0 auto; padding: 3rem var(--pad); color: #F3F0E8; }

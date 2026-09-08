@@ -126,30 +126,12 @@
   // The light through the doorway follows the light outside: white and strong
   // at midday, amber near the horizon, thin and blue at night. Only that light
   // changes; the rest of the frame stays neutral.
-  var LIGHT = {
-    // glow: daylight coming in. night: how far the outside has gone dark.
-    night:  { b: 0.30, c: 9.0, blur: 1.5, o: 0.06, n: 0.82, pb: 0.80, pc: 1.24 },
-    golden: { b: 0.44, c: 6.0, blur: 6.0, o: 0.70, n: 0.10, pb: 0.96, pc: 1.10 },
-    day:    { b: 0.56, c: 4.2, blur: 11.0, o: 0.95, n: 0.00, pb: 1.06, pc: 1.00 }
-  };
-
-  function lerp(a, b, t) { return a + (b - a) * t; }
-
+  // Which photograph the visitor is looking at: fully the day frame while the
+  // sun is up, fully the night frame once twilight has finished.
   function photoLight(alt) {
-    var from, to, t;
-    if (alt <= -14) { from = to = LIGHT.night; t = 0; }
-    else if (alt <= -2) { from = LIGHT.night; to = LIGHT.golden; t = (alt + 14) / 12; }
-    else if (alt <= 12) { from = LIGHT.golden; to = LIGHT.day; t = (alt + 2) / 14; }
-    else { from = to = LIGHT.day; t = 0; }
-    t = t * t * (3 - 2 * t);
-    var r = document.documentElement.style;
-    r.setProperty("--ph-b", lerp(from.pb, to.pb, t).toFixed(3));
-    r.setProperty("--ph-c", lerp(from.pc, to.pc, t).toFixed(3));
-    r.setProperty("--glow-b", lerp(from.b, to.b, t).toFixed(3));
-    r.setProperty("--glow-c", lerp(from.c, to.c, t).toFixed(2));
-    r.setProperty("--glow-blur", lerp(from.blur, to.blur, t).toFixed(2) + "px");
-    r.setProperty("--glow-o", lerp(from.o, to.o, t).toFixed(3));
-    r.setProperty("--night-o", lerp(from.n, to.n, t).toFixed(3));
+    var mix = Math.max(0, Math.min(1, (2 - alt) / 12));
+    mix = mix * mix * (3 - 2 * mix);
+    document.documentElement.style.setProperty("--night-mix", mix.toFixed(3));
   }
 
   // Preview switch: append ?sky=21:30 to see the site at that hour today.

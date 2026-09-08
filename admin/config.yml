@@ -58,7 +58,8 @@ collections:
               - { label: "Lede", name: "lede", widget: "text" }
               - { label: "Body", name: "body", widget: "text" }
               - { label: "Tagline", name: "tagline", widget: "text" }
-              - { label: "Hero Photo", name: "image", widget: "image" }
+              - { label: "Hero Photo (day)", name: "image", widget: "image" }
+              - { label: "Hero Photo (night, optional)", name: "image_night", widget: "image", required: false }
               - label: "Primary CTA"
                 name: "primary_cta"
                 widget: "object"

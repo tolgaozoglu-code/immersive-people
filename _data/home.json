@@ -12,7 +12,8 @@
       "label": "Book a Call",
       "url": "#contact"
     },
-    "image": "/assets/uploads/hero.jpg"
+    "image": "/assets/uploads/hero.jpg",
+    "image_night": "/assets/uploads/hero-night.jpg"
   },
   "quicklinks": [
     {
