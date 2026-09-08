@@ -2,7 +2,7 @@
 
 :root {
   --ph-b: 1; --ph-c: 1.06;
-  --glow-b: 0.45; --glow-c: 6; --glow-blur: 5px; --glow-o: 0.5;
+  --glow-b: 0.45; --glow-c: 6; --glow-blur: 5px; --glow-o: 0.5; --night-o: 0;
   --font-body: "Rajdhani", sans-serif;
   --font-serif: "Libre Baskerville", serif;
   --maxw: 1180px;
@@ -85,15 +85,25 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--ink); outline-o
 }
 /* Only the light coming through the doorway carries the hour's colour: the
    bright areas are isolated and tinted, the rest of the frame stays neutral. */
-.hero-glow {
+.hero-glow, .hero-night {
   position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
   animation: heroDrift 36s ease-in-out infinite alternate;
-  mix-blend-mode: screen; pointer-events: none;
-  /* Monochrome throughout: the hour changes how far the light reaches and how
-     hard its edge is, not its colour. */
+  pointer-events: none;
+  transition: filter 4s linear, opacity 4s linear;
+}
+/* Daylight spilling in through the opening. */
+.hero-glow {
+  mix-blend-mode: screen;
   filter: grayscale(1) brightness(var(--glow-b)) contrast(var(--glow-c)) blur(var(--glow-blur));
   opacity: var(--glow-o);
-  transition: filter 4s linear, opacity 4s linear;
+}
+/* After sunset the opening is not a bright doorway any more: the same bright
+   areas are inverted and multiplied back, so what lies outside goes dark while
+   the interior is left as it is. */
+.hero-night {
+  mix-blend-mode: multiply;
+  filter: grayscale(1) brightness(0.5) contrast(5.5) invert(1) blur(2px);
+  opacity: var(--night-o);
 }
 @keyframes heroDrift {
   from { transform: scale(1.02) translate(0, 0); }

@@ -127,19 +127,19 @@
   // at midday, amber near the horizon, thin and blue at night. Only that light
   // changes; the rest of the frame stays neutral.
   var LIGHT = {
-    // b/c/blur/o shape the doorway light; pb/pc lift or sink the room around it.
-    night:  { b: 0.30, c: 9.0, blur: 1.5, o: 0.20, pb: 0.82, pc: 1.22 },
-    golden: { b: 0.44, c: 6.0, blur: 6.0, o: 0.72, pb: 0.96, pc: 1.10 },
-    day:    { b: 0.56, c: 4.2, blur: 11.0, o: 0.95, pb: 1.06, pc: 1.00 }
+    // glow: daylight coming in. night: how far the outside has gone dark.
+    night:  { b: 0.30, c: 9.0, blur: 1.5, o: 0.06, n: 0.82, pb: 0.80, pc: 1.24 },
+    golden: { b: 0.44, c: 6.0, blur: 6.0, o: 0.70, n: 0.10, pb: 0.96, pc: 1.10 },
+    day:    { b: 0.56, c: 4.2, blur: 11.0, o: 0.95, n: 0.00, pb: 1.06, pc: 1.00 }
   };
 
   function lerp(a, b, t) { return a + (b - a) * t; }
 
   function photoLight(alt) {
     var from, to, t;
-    if (alt <= -18) { from = to = LIGHT.night; t = 0; }
-    else if (alt <= -4) { from = LIGHT.night; to = LIGHT.golden; t = (alt + 18) / 14; }
-    else if (alt <= 12) { from = LIGHT.golden; to = LIGHT.day; t = (alt + 4) / 16; }
+    if (alt <= -14) { from = to = LIGHT.night; t = 0; }
+    else if (alt <= -2) { from = LIGHT.night; to = LIGHT.golden; t = (alt + 14) / 12; }
+    else if (alt <= 12) { from = LIGHT.golden; to = LIGHT.day; t = (alt + 2) / 14; }
     else { from = to = LIGHT.day; t = 0; }
     t = t * t * (3 - 2 * t);
     var r = document.documentElement.style;
@@ -149,6 +149,7 @@
     r.setProperty("--glow-c", lerp(from.c, to.c, t).toFixed(2));
     r.setProperty("--glow-blur", lerp(from.blur, to.blur, t).toFixed(2) + "px");
     r.setProperty("--glow-o", lerp(from.o, to.o, t).toFixed(3));
+    r.setProperty("--night-o", lerp(from.n, to.n, t).toFixed(3));
   }
 
   // Preview switch: append ?sky=21:30 to see the site at that hour today.
