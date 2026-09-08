@@ -128,7 +128,7 @@
   var LIGHT = {
     night:  { b: 0.62, s: 0.30, h: 195, c: 1.22 },
     golden: { b: 0.95, s: 0.55, h: 355, c: 1.10 },
-    day:    { b: 1.14, s: 0.06, h: 0,   c: 1.02 }
+    day:    { b: 1.14, s: 0.06, h: 360, c: 1.02 }
   };
 
   function lerp(a, b, t) { return a + (b - a) * t; }
@@ -147,8 +147,21 @@
     r.setProperty("--ph-c", lerp(from.c, to.c, t).toFixed(3));
   }
 
+
+  // Preview switch: append ?sky=21:30 to see the site at that hour today.
+  // Without it the real clock is used.
+  function now() {
+    var q = new URLSearchParams(location.search).get("sky");
+    if (!q) return new Date();
+    var m = q.match(/^(\d{1,2})(?::(\d{2}))?$/);
+    if (!m) return new Date();
+    var d = new Date();
+    d.setHours(+m[1], m[2] ? +m[2] : 0, 0, 0);
+    return d;
+  }
+
   function applyAmbience() {
-    var alt = sunAltitude(new Date(), obs.lat, obs.lon);
+    var alt = sunAltitude(now(), obs.lat, obs.lon);
     photoLight(alt);
     if (adaptive) {
       document.documentElement.style.setProperty("--bg", tint(alt));
@@ -179,7 +192,7 @@
     // Fewer stars on small screens: they would not be resolvable anyway.
     var magLimit = w < 700 ? 4.3 : 5.0;
 
-    var lst = (gmst(new Date()) + obs.lon) * rad;
+    var lst = (gmst(now()) + obs.lon) * rad;
     var latR = obs.lat * rad;
     var sinLat = Math.sin(latR), cosLat = Math.cos(latR);
     var R = Math.max(w, h) * 0.72;

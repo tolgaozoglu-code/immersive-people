@@ -87,6 +87,16 @@
     };
   }
 
+  function nowTime() {
+    var q = new URLSearchParams(location.search).get("sky");
+    if (!q) return new Date();
+    var m = q.match(/^(\d{1,2})(?::(\d{2}))?$/);
+    if (!m) return new Date();
+    var d = new Date();
+    d.setHours(+m[1], m[2] ? +m[2] : 0, 0, 0);
+    return d;
+  }
+
   function draw() {
     if (!rings) return;
     var size = el.clientWidth || 40;
@@ -98,7 +108,7 @@
     cx.setTransform(dpr, 0, 0, dpr, 0, 0);
     cx.clearRect(0, 0, size, size);
 
-    var now = new Date();
+    var now = nowTime();
     var sun = subSolar(now);
     P.lon0 = sun.lon * rad;
     var lat0 = sun.lat * 0.5 * rad;
