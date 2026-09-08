@@ -149,6 +149,55 @@
     return { from: edge[1], to: edge[1], t: 0 };
   }
 
+
+  // The sky seen through the doorway: same stars, same instant, framed by the
+  // opening instead of the whole window.
+  var archCv, archCx, archStars = [];
+  function drawArch(nightAmount) {
+    var media = document.querySelector(".hero-media");
+    archCv = archCv || document.querySelector(".hero-sky");
+    if (!media || !archCv || !stars) return;
+    document.documentElement.style.setProperty("--arch-night", nightAmount.toFixed(3));
+    if (nightAmount < 0.02) return;
+
+    archCx = archCx || archCv.getContext("2d");
+    var w = media.clientWidth, h = media.clientHeight;
+    var dpr = Math.min(devicePixelRatio || 1, 2);
+    if (archCv.width !== w * dpr || archCv.height !== h * dpr) {
+      archCv.width = w * dpr; archCv.height = h * dpr;
+      archCx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    archCx.clearRect(0, 0, w, h);
+
+    var lst = (gmst(now()) + obs.lon) * rad;
+    var latR = obs.lat * rad;
+    var sinLat = Math.sin(latR), cosLat = Math.cos(latR);
+    var R = Math.max(w, h) * 1.15;
+    var ox = w / 2, oy = h * 0.62;
+    var ink = getComputedStyle(document.documentElement).getPropertyValue("--ink").trim() || "#F3F0E8";
+    archCx.fillStyle = ink;
+
+    for (var i = 0; i < stars.length; i++) {
+      var st = stars[i];
+      if (st[2] > 4.6) continue;
+      var ha = lst - st[0] * rad, dec = st[1] * rad;
+      var sinDec = Math.sin(dec), cosDec = Math.cos(dec);
+      var sinAlt = sinLat * sinDec + cosLat * cosDec * Math.cos(ha);
+      if (sinAlt <= 0.05) continue;
+      var altR = Math.asin(sinAlt);
+      var az = Math.atan2(-Math.sin(ha) * cosDec,
+                          cosDec * Math.cos(ha) * sinLat - sinDec * cosLat);
+      var r = R * Math.tan((Math.PI / 2 - altR) / 2);
+      var x = ox + r * Math.sin(az), y = oy - r * Math.cos(az);
+      if (x < -4 || x > w + 4 || y < -4 || y > h + 4) continue;
+      archCx.globalAlpha = Math.max(0.15, Math.min(1, (4.9 - st[2]) / 4));
+      archCx.beginPath();
+      archCx.arc(x, y, Math.max(0.6, (4.8 - st[2]) * 0.42), 0, 6.283);
+      archCx.fill();
+    }
+    archCx.globalAlpha = 1;
+  }
+
   var frames = [], fa, fb, shown = "";
   function photoLight(alt) {
     var media = document.querySelector(".hero-media");
@@ -171,6 +220,10 @@
       fb.src = frames[f.to];
     }
     document.documentElement.style.setProperty("--frame-mix", f.t.toFixed(3));
+
+    // How much of what is on screen is the night frame (index 0).
+    var nightAmount = (f.from === 0 ? 1 - f.t : 0) + (f.to === 0 ? f.t : 0);
+    drawArch(nightAmount);
   }
 
   // Preview switch: append ?sky=21:30 to see the site at that hour today.
