@@ -11,6 +11,16 @@
   var cx = canvas.getContext("2d");
   var rad = Math.PI / 180;
   var rings = null;
+  // Each visit is a fresh impression: the lines are cut at a slightly
+  // different angle and weight, as no two prints from a plate are identical.
+  var seed = Math.random();
+  var plate = { wobble: (seed - 0.5) * 0.8 };
+  function rnd(n) {
+    var t = (n * 1103515245 + seed * 1e9) >>> 0;
+    t = (t ^ (t >>> 15)) * 2246822507;
+    t = (t ^ (t >>> 13)) * 3266489909;
+    return ((t ^ (t >>> 16)) >>> 0) / 4294967296;
+  }
 
   function gmst(date) {
     var jd = date.getTime() / 86400000 + 2440587.5;
@@ -46,11 +56,15 @@
     ];
   }
 
-  function trace(points, ctx, close) {
+  function trace(points, ctx, close, wobble) {
     var started = false, drew = false;
     for (var i = 0; i < points.length; i++) {
       var p = project(points[i][0], points[i][1]);
       if (!p) { started = false; continue; }
+      if (wobble) {
+        p[0] += (rnd(i * 7 + points.length) - 0.5) * wobble;
+        p[1] += (rnd(i * 13 + points.length) - 0.5) * wobble;
+      }
       if (!started) { ctx.moveTo(p[0], p[1]); started = true; } else { ctx.lineTo(p[0], p[1]); }
       drew = true;
     }
