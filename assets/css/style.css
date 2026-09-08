@@ -80,6 +80,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--ink); outline-o
 .hero-media img {
   position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
   animation: heroDrift 36s ease-in-out infinite alternate; will-change: transform;
+  filter: grayscale(1) contrast(1.06);
 }
 /* Only the light coming through the doorway carries the hour's colour: the
    bright areas are isolated and tinted, the rest of the frame stays neutral. */
