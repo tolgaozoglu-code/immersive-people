@@ -119,61 +119,61 @@
     P.oy = size / 2;
 
     var ink = getComputedStyle(document.documentElement).getPropertyValue("--ink").trim() || "#F3F0E8";
-    // Below roughly 60px the plate cannot hold ruling: it turns to noise, so
-    // the drawing is reduced to clean line work at that size.
     var detailed = size * dpr >= 120;
-    var gratStep = detailed ? 30 : 45;
 
     cx.lineJoin = "round";
     cx.lineCap = "round";
     cx.strokeStyle = ink;
 
-    // Everything is drawn inside the disc.
+    // Drawn as an old instrument rather than a globe icon: a banded sphere
+    // inside a graduated ring, with the coasts cut in coarsely.
     cx.save();
     cx.beginPath();
     cx.arc(P.ox, P.oy, P.R, 0, 6.283);
     cx.clip();
 
-    // Graticule
-    cx.globalAlpha = detailed ? 0.16 : 0.13;
-    cx.lineWidth = 0.4;
+    // Equatorial band and the tropics, the way an armillary is hooped.
+    cx.globalAlpha = 0.34;
+    cx.lineWidth = 0.8;
     cx.beginPath();
-    for (var lon = -180; lon < 180; lon += gratStep) {
+    var eq = [];
+    for (var lo = -180; lo <= 180; lo += 4) eq.push([lo, 0]);
+    trace(eq, cx, false);
+    cx.stroke();
+
+    cx.globalAlpha = 0.16;
+    cx.lineWidth = 0.45;
+    cx.beginPath();
+    [-23.4, 23.4, -66.5, 66.5].forEach(function (lat) {
+      var ring = [];
+      for (var l = -180; l <= 180; l += 4) ring.push([l, lat]);
+      trace(ring, cx, false);
+    });
+    // Only three meridians: enough to read as a sphere, not a grid.
+    for (var lon = -180; lon < 180; lon += 60) {
       var mer = [];
-      for (var la = -80; la <= 80; la += 4) mer.push([lon, la]);
+      for (var la = -84; la <= 84; la += 4) mer.push([lon, la]);
       trace(mer, cx, false);
-    }
-    for (var lat = -gratStep; lat <= gratStep; lat += gratStep) {
-      var par = [];
-      for (var lo = -180; lo <= 180; lo += 4) par.push([lo, lat]);
-      trace(par, cx, false);
     }
     cx.stroke();
 
-    // Land
+    // Coasts, cut coarsely: the small islands an engraver would have left out.
+    cx.globalAlpha = 0.9;
+    cx.lineWidth = 0.75;
     cx.beginPath();
-    var any = false;
-    for (var i = 0; i < rings.length; i++) if (trace(rings[i], cx, true)) any = true;
-    if (any) {
-      if (detailed) {
-        cx.save();
-        cx.clip();
-        var step = Math.max(2, Math.round(2.4 * dpr)) / dpr;
-        cx.globalAlpha = 0.7;
-        cx.fillStyle = hatch(ink, step, -Math.PI / 4, 0.5);
-        cx.fillRect(0, 0, size, size);
-        cx.restore();
-      } else {
-        cx.globalAlpha = 0.5;
-        cx.fillStyle = ink;
-        cx.fill("evenodd");
-      }
-      cx.globalAlpha = detailed ? 0.85 : 0.8;
-      cx.lineWidth = 0.5;
-      cx.stroke();
+    var wob = 0.45 + Math.abs(plate.wobble) * 0.5;
+    for (var i = 0; i < rings.length; i++) {
+      var r0 = rings[i];
+      var lons = r0.map(function (p) { return p[0]; });
+      var lats = r0.map(function (p) { return p[1]; });
+      var span = Math.max(Math.max.apply(null, lons) - Math.min.apply(null, lons),
+                          Math.max.apply(null, lats) - Math.min.apply(null, lats));
+      if (span < 14) continue;                 // omit the small islands
+      trace(r0, cx, true, wob);
     }
+    cx.stroke();
+    cx.restore();
 
-    // Volume: the limb away from the sun falls off.
     // True terminator: each point on the sphere is shaded by the angle its
     // surface makes with the sun. A radial fade cannot express this and shows
     // as a band; this is the real division between day and night.
@@ -205,11 +205,27 @@
     cx.drawImage(shade, P.ox - P.R, P.oy - P.R, P.R * 2, P.R * 2);
     cx.restore();
 
-    // Rim
-    cx.globalAlpha = 0.7;
-    cx.lineWidth = 0.7;
+    // The graduated ring the sphere sits in.
+    cx.globalAlpha = 0.8;
+    cx.lineWidth = 0.8;
     cx.beginPath();
     cx.arc(P.ox, P.oy, P.R, 0, 6.283);
+    cx.stroke();
+    cx.globalAlpha = 0.5;
+    cx.lineWidth = 0.4;
+    cx.beginPath();
+    cx.arc(P.ox, P.oy, P.R - 2.2, 0, 6.283);
+    cx.stroke();
+    cx.globalAlpha = 0.55;
+    cx.lineWidth = 0.5;
+    cx.beginPath();
+    for (var d = 0; d < 24; d++) {
+      var a = d / 24 * 6.283;
+      var long = d % 6 === 0;
+      var r1 = P.R - (long ? 3.4 : 2.2), r2 = P.R;
+      cx.moveTo(P.ox + r1 * Math.cos(a), P.oy + r1 * Math.sin(a));
+      cx.lineTo(P.ox + r2 * Math.cos(a), P.oy + r2 * Math.sin(a));
+    }
     cx.stroke();
     cx.globalAlpha = 1;
   }
