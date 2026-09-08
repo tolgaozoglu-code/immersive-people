@@ -12,8 +12,33 @@
       "label": "Book a Call",
       "url": "#contact"
     },
-    "image": "/assets/uploads/hero.jpg",
-    "image_night": "/assets/uploads/hero-night.jpg"
+    "image": "/assets/uploads/hero/03-midday.jpg",
+    "frames": [
+      {
+        "label": "Night",
+        "image": "/assets/uploads/hero/06-night.jpg"
+      },
+      {
+        "label": "Before dawn",
+        "image": "/assets/uploads/hero/01-predawn.jpg"
+      },
+      {
+        "label": "Morning",
+        "image": "/assets/uploads/hero/02-morning.jpg"
+      },
+      {
+        "label": "Midday",
+        "image": "/assets/uploads/hero/03-midday.jpg"
+      },
+      {
+        "label": "Late afternoon",
+        "image": "/assets/uploads/hero/04-afternoon.jpg"
+      },
+      {
+        "label": "Evening",
+        "image": "/assets/uploads/hero/05-evening.jpg"
+      }
+    ]
   },
   "quicklinks": [
     {

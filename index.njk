@@ -13,9 +13,9 @@ permalink: /
       <a class="btn btn-ghost" href="{{ home.hero.secondary_cta.url }}">{{ home.hero.secondary_cta.label }}</a>
     </div>
   </div>
-  <div class="hero-media">
-    <img src="{{ home.hero.image }}" alt="{{ home.hero.title }}">
-    {% if home.hero.image_night %}<img class="hero-night-photo" src="{{ home.hero.image_night }}" alt="" aria-hidden="true">{% endif %}
+  <div class="hero-media" data-frames='["/assets/uploads/hero/06-night.jpg","/assets/uploads/hero/01-predawn.jpg","/assets/uploads/hero/02-morning.jpg","/assets/uploads/hero/03-midday.jpg","/assets/uploads/hero/04-afternoon.jpg","/assets/uploads/hero/05-evening.jpg"]'>
+    <img class="hero-frame hero-frame-a" src="{{ home.hero.image }}" alt="{{ home.hero.title }}">
+    <img class="hero-frame hero-frame-b" src="{{ home.hero.image }}" alt="" aria-hidden="true">
     <canvas class="hero-dust" aria-hidden="true"></canvas>
   </div>
 </section>

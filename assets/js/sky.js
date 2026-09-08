@@ -126,12 +126,50 @@
   // The light through the doorway follows the light outside: white and strong
   // at midday, amber near the horizon, thin and blue at night. Only that light
   // changes; the rest of the frame stays neutral.
-  // Which photograph the visitor is looking at: fully the day frame while the
-  // sun is up, fully the night frame once twilight has finished.
+  // Which photograph the visitor is looking at. The day runs through six
+  // frames; the sun's altitude, and whether it is climbing or falling, decides
+  // which two are on screen and how far between them we are.
+  var RISING = [[-16, 0], [-6, 1], [4, 2], [16, 3]];    // night, dawn, morning, midday
+  var FALLING = [[16, 3], [6, 4], [-4, 5], [-16, 0]];   // midday, afternoon, evening, night
+
+  function frameFor(alt, climbing) {
+    var stops = climbing ? RISING : FALLING;
+    for (var i = 0; i < stops.length - 1; i++) {
+      var a = stops[i], b = stops[i + 1];
+      var lo = Math.min(a[0], b[0]), hi = Math.max(a[0], b[0]);
+      if (alt >= lo && alt <= hi) {
+        var t = (alt - a[0]) / (b[0] - a[0]);
+        t = t * t * (3 - 2 * t);
+        return { from: a[1], to: b[1], t: t };
+      }
+    }
+    var edge = alt > 0 ? stops[stops.length - 1] : stops[0];
+    if (climbing) edge = alt > 0 ? stops[stops.length - 1] : stops[0];
+    return { from: edge[1], to: edge[1], t: 0 };
+  }
+
+  var frames = [], fa, fb, shown = "";
   function photoLight(alt) {
-    var mix = Math.max(0, Math.min(1, (2 - alt) / 12));
-    mix = mix * mix * (3 - 2 * mix);
-    document.documentElement.style.setProperty("--night-mix", mix.toFixed(3));
+    var media = document.querySelector(".hero-media");
+    if (!media) return;
+    if (!frames.length) {
+      try { frames = JSON.parse(media.dataset.frames || "[]"); } catch (e) { return; }
+      fa = media.querySelector(".hero-frame-a");
+      fb = media.querySelector(".hero-frame-b");
+    }
+    if (!frames.length || !fa || !fb) return;
+
+    var d = now();
+    var later = new Date(d.getTime() + 600000);
+    var climbing = sunAltitude(later, obs.lat, obs.lon) > alt;
+    var f = frameFor(alt, climbing);
+    var key = f.from + "-" + f.to;
+    if (key !== shown) {
+      shown = key;
+      fa.src = frames[f.from];
+      fb.src = frames[f.to];
+    }
+    document.documentElement.style.setProperty("--frame-mix", f.t.toFixed(3));
   }
 
   // Preview switch: append ?sky=21:30 to see the site at that hour today.
