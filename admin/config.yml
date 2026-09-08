@@ -19,6 +19,8 @@ collections:
         file: "_data/site.json"
         fields:
           - { label: "Brand Name", name: "brand", widget: "string" }
+          - { label: "Site Description (search results and shared links)", name: "description", widget: "text" }
+          - { label: "Site URL", name: "url", widget: "string" }
           - label: "Theme"
             name: "theme"
             widget: "select"

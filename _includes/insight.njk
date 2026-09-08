@@ -1,5 +1,7 @@
 ---
 layout: base.njk
+eleventyComputed:
+  description: "{{ excerpt }}"
 ---
 <article class="article"{% if image or keyart %} style="--card-art: url('{{ image or keyart }}')"{% endif %}>
   <p class="article-date">{{ page.date.toISOString().slice(0,10) }}</p>

@@ -4,7 +4,18 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{% if title %}{{ title }} — {% endif %}{{ site.brand }}</title>
-<meta name="description" content="Immersive People professional responsive site.">
+<meta name="description" content="{{ description or site.description }}">
+<link rel="canonical" href="{{ site.url }}{{ page.url }}">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="{{ site.brand }}">
+<meta property="og:title" content="{% if title %}{{ title }} — {{ site.brand }}{% else %}{{ site.brand }}{% endif %}">
+<meta property="og:description" content="{{ description or site.description }}">
+<meta property="og:url" content="{{ site.url }}{{ page.url }}">
+<meta property="og:image" content="{{ site.url }}/assets/brand/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{% if title %}{{ title }} — {{ site.brand }}{% else %}{{ site.brand }}{% endif %}">
+<meta name="twitter:description" content="{{ description or site.description }}">
+<meta name="twitter:image" content="{{ site.url }}/assets/brand/og.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=League+Gothic&family=Barlow+Condensed:wght@500;600&family=Oswald:wght@400;500;600&family=Rajdhani:wght@400;500;600&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
