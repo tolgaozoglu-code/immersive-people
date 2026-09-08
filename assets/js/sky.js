@@ -152,7 +152,7 @@
 
   // The sky seen through the doorway: same stars, same instant, framed by the
   // opening instead of the whole window.
-  var archCv, archCx, archStars = [];
+  var archCv, archCx, refCv, refCx;
   function drawArch(nightAmount) {
     var media = document.querySelector(".hero-media");
     archCv = archCv || document.querySelector(".hero-sky");
@@ -196,6 +196,22 @@
       archCx.fill();
     }
     archCx.globalAlpha = 1;
+
+    // The reflection: the same sky, thrown back off the polished floor.
+    refCv = refCv || document.querySelector(".hero-reflection");
+    if (!refCv) return;
+    refCx = refCx || refCv.getContext("2d");
+    if (refCv.width !== archCv.width || refCv.height !== archCv.height) {
+      refCv.width = archCv.width; refCv.height = archCv.height;
+    }
+    refCx.setTransform(1, 0, 0, 1, 0, 0);
+    refCx.clearRect(0, 0, refCv.width, refCv.height);
+    refCx.save();
+    refCx.translate(0, refCv.height);
+    refCx.scale(1, -1);
+    refCx.globalAlpha = 0.9;
+    refCx.drawImage(archCv, 0, 0);
+    refCx.restore();
   }
 
   var frames = [], fa, fb, shown = "";
