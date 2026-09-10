@@ -53,14 +53,14 @@
       "title": "Our Approach",
       "text": "Strategy, storytelling and design working in harmony — from concept to experience.",
       "link_label": "Learn More →",
-      "url": "#approach"
+      "url": "/approach/"
     },
     {
       "mark": "♟",
       "title": "Who We Work With",
       "text": "Venues, museums, institutions and brands creating impact through immersive experiences.",
       "link_label": "See References →",
-      "url": "#references"
+      "url": "/references/"
     },
     {
       "mark": "○",
@@ -185,11 +185,11 @@
     },
     {
       "label": "Approach",
-      "url": "/#approach"
+      "url": "/approach/"
     },
     {
       "label": "References",
-      "url": "/#references"
+      "url": "/references/"
     },
     {
       "label": "Collective",

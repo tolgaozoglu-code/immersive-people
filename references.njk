@@ -1,0 +1,28 @@
+---
+layout: base.njk
+title: References
+description: Organisations engaged through work delivered by members of the Immersive People collective.
+permalink: /references/
+---
+<section class="section section-refs">
+  <h2 class="section-title">{{ home.clients.title }}</h2>
+  <p class="section-intro">Selected organisations engaged through work delivered by members of our collective.</p>
+  <div class="refs-marquee">
+    <div class="refs-track">
+      {% for copy in [0, 1] %}
+      <div class="refs-group" {% if copy %}aria-hidden="true"{% endif %}>
+        {% for c in home.clients.logos %}
+        {% set autologo = logo_files[c.name] %}
+        {% if c.image %}<img class="client-img" src="{{ c.image }}" alt="{{ c.name }}">{% elif autologo %}<img class="client-img" src="{{ autologo }}" alt="{{ c.name }}">{% else %}<span class="client">{{ c.name }}</span>{% endif %}
+        {% endfor %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section contact">
+  <h2 class="contact-title">{{ home.contact.title }}</h2>
+  <p class="section-intro">{{ home.contact.body }}</p>
+  <a class="btn btn-solid" href="mailto:{{ site.email }}">{{ home.contact.cta_label }}</a>
+</section>

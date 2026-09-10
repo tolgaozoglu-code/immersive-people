@@ -1,0 +1,37 @@
+---
+layout: base.njk
+title: Approach
+description: How Immersive People turns a subject into an experience: strategy, storytelling and design working as one.
+permalink: /approach/
+---
+<section class="section">
+  <h2 class="section-title">{{ home.why.title }}</h2>
+  <p class="section-intro">{{ home.why.intro }}</p>
+  <div class="why-grid">
+    {% for item in home.why.items %}
+    <article class="why-item">
+      <h3>{{ item.title }}</h3>
+      <p>{{ item.text }}</p>
+    </article>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="section">
+  <p class="kicker">{{ collective.principles.kicker }}</p>
+  <h2 class="section-title">{{ collective.principles.title }}</h2>
+  <div class="why-grid coll-principles">
+    {% for item in collective.principles.items %}
+    <article class="why-item">
+      <h3>{{ item.title }}</h3>
+      <p>{{ item.text }}</p>
+    </article>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="section contact">
+  <h2 class="contact-title">{{ home.contact.title }}</h2>
+  <p class="section-intro">{{ home.contact.body }}</p>
+  <a class="btn btn-solid" href="mailto:{{ site.email }}">{{ home.contact.cta_label }}</a>
+</section>
