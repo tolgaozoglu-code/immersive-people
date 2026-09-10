@@ -127,11 +127,13 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--ink); outline-o
 /* Quicklinks */
 .quicklinks {
   max-width: var(--maxw); margin: 0 auto; padding: 0 var(--pad);
-  display: grid; grid-template-columns: repeat(4, 1fr);
+  /* Columns follow the number of cards, so removing one leaves no empty cell. */
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
 }
 .quicklink { padding: 2.2rem 1.6rem 2rem; display: flex; flex-direction: column; gap: 0.5rem; border-right: 1px solid var(--line); }
 .quicklink:first-child { border-left: 1px solid var(--line); }
+.quicklink:last-child { border-right: 1px solid var(--line); }
 .quicklink:hover { background: var(--card); }
 .quicklink-mark { font-size: 1.4rem; }
 .quicklink-title { font-family: var(--font-display); font-weight: var(--display-weight); font-size: 1.5rem; letter-spacing: var(--display-track); }

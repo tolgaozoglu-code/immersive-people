@@ -42,6 +42,13 @@
   },
   "quicklinks": [
     {
+      "mark": "✺",
+      "title": "Our Work",
+      "text": "Immersive experiences that connect people to stories, places and ideas.",
+      "link_label": "Learn More →",
+      "url": "mailto:hello@immersivepeople.co"
+    },
+    {
       "mark": "◎",
       "title": "Our Approach",
       "text": "Strategy, storytelling and design working in harmony — from concept to experience.",
