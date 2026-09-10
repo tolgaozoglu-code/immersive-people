@@ -42,13 +42,6 @@
   },
   "quicklinks": [
     {
-      "mark": "✺",
-      "title": "Our Work",
-      "text": "Immersive experiences that connect people to stories, places and ideas.",
-      "link_label": "View Projects →",
-      "url": "#work"
-    },
-    {
       "mark": "◎",
       "title": "Our Approach",
       "text": "Strategy, storytelling and design working in harmony — from concept to experience.",
@@ -184,10 +177,6 @@
       "url": "/#home"
     },
     {
-      "label": "Work",
-      "url": "/#work"
-    },
-    {
       "label": "Approach",
       "url": "/#approach"
     },
@@ -212,5 +201,5 @@
       "url": "/#contact"
     }
   ],
-  "show_productions": true
+  "show_productions": false
 }
